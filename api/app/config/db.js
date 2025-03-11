@@ -31,6 +31,6 @@ const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelizeInstance = sequelizeInstance;
-db.actor = require('../models/alumnoModels')(sequelizeInstance,Sequelize);
+db.alumno = require('../models/alumnoModels')(sequelizeInstance,Sequelize);
 
 module.exports = db;

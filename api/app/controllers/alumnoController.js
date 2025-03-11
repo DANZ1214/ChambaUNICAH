@@ -1,10 +1,10 @@
 'use strict'
 
 const db = require('../config/db')
-const actor = db.actor;
+const alumno = db.alumno;
 
 async function getAlumno(req,res) {
-    actor.findAll()
+    alumno.findAll()
     .then(result=> {
         res.estatus(200).send({ result })
     })
