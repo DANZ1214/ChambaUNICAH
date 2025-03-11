@@ -11,7 +11,7 @@ db.sequelizeInstance.sync()
         console.info("Base de Datos Sincronizada");
         App.listen(parseInt(PORT), function (error){
             if(error) return console.error(error);
-            console.info('server running on port: ${PORT}');
+            console.info('server running on port: 3008');
         }); 
     })
     .catch(error => console.error(error));
