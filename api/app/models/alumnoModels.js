@@ -7,7 +7,7 @@ module.exports = (sequelize) => {
     const attributes = {
         alumnoId: {
             type: DataTypes.INTEGER,
-            primarykey : true
+            primarykey : true,
         },
         nombre: {
             type: DataTypes.STRING(45)
