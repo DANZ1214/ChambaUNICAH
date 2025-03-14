@@ -5,7 +5,7 @@ const docente = db.docente;
 
 async function getDocente(req, res) {
     docente.findAll({
-        attributes: ['docenteId', 'email', 'nombre', 'telefono'] // Seleccionar solo estas columnas
+        attributes: ['docenteId', 'email', 'nombre' ] // Seleccionar solo estas columnas
     })
     .then(result => {
         res.status(200).json(result)

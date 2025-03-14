@@ -22,6 +22,6 @@ App.use(express.json({limit: `10mb`}));
 App.use(express.urlencoded({extended: false}));
 
 //Creacion de end Points
-App.use('/api/alumno', alumnoRoutes, claseRoutes)
+App.use('/api/alumno', alumnoRoutes, claseRoutes, docenteRoutes)
 
 module.exports = App;

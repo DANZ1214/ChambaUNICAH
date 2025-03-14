@@ -14,9 +14,6 @@ module.exports = (sequelize) => {
         },
         nombre: {
             type: DataTypes.STRING(45)
-        },
-        telefono: {
-            type: DataTypes.STRING(45)
         }
     }
     const options = {
