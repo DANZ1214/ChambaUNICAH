@@ -28,10 +28,14 @@ async function insertAlumno(req, res) {
 }
 
 async function deleteAlumno(req, res) {
-    const { alumnoId } = req.params; // Obtener el ID del alumno desde los parámetros de la URL
+    const { alumnoId } = req.body; // Obtener el ID desde el cuerpo de la solicitud
+
+    if (!alumnoId) {
+        return res.status(400).send({ message: "Se requiere un alumnoId válido" });
+    }
 
     alumno.destroy({
-        where: { alumnoId } // Condición para eliminar el registro
+        where: { alumnoId }
     })
     .then(deleted => {
         if (deleted) {
@@ -43,7 +47,7 @@ async function deleteAlumno(req, res) {
     .catch(error => {
         res.status(500).send({ message: error.message || "Error al eliminar alumno" });
     });
-} 
+}
 
 
 

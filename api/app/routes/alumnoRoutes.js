@@ -6,5 +6,6 @@ const apiRoutes = express.Router();
 
 apiRoutes.get('/getAlumno',async(req, res) => await alumnoController.getAlumno(req, res));
 apiRoutes.post('/insertAlumno',async(req, res) => await alumnoController.insertAlumno(req, res));
+apiRoutes.delete('/deleteAlumno',async(req, res) => await alumnoController.deleteAlumno(req, res));
 
 module.exports = apiRoutes;
