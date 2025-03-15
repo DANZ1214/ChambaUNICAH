@@ -5,9 +5,7 @@ const alumno = db.alumno;
 
 // Obtener un nuevo alumno
 async function getAlumno(req, res) {
-    alumno.findAll({
-        attributes: ['alumnoId', 'nombre', 'facultadId'] // Seleccionar solo estas columnas
-    })
+    alumno.findAll()
     .then(result => {
         res.status(200).json(result)
     })
