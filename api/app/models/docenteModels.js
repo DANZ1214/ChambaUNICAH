@@ -22,7 +22,7 @@ module.exports = (sequelize) => {
         },
         scopes: {},
         tableName: 'docente',
-        timestamps: 'false'
+        timestamps: false
     }
     return sequelize.define('docente', attributes, options);
 }

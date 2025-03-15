@@ -19,7 +19,7 @@ module.exports = (sequelize) => {
         },
         scopes: {},
         tableName: 'clases',
-        timestamps: 'false'
+        timestamps: false
     }
     return sequelize.define('clases', attributes, options);
 }

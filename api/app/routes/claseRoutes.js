@@ -1,10 +1,12 @@
-'use strict'
+'use strict';
 
 const express = require('express');
-const alumnoController = require('../controllers/claseController');
+const claseController = require('../controllers/claseController');
 const apiRoutes = express.Router();
 
-apiRoutes.get('/getClase',async(req, res)=>await
-alumnoController.getClase(req, res))
+apiRoutes.get('/getClase', claseController.getClase);
+apiRoutes.post('/insertClase', claseController.insertClase);
+apiRoutes.put('/updateClase', claseController.updateClase);
+apiRoutes.delete('/deleteClase', claseController.deleteClase);
 
 module.exports = apiRoutes;
