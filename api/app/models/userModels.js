@@ -7,7 +7,7 @@ module.exports = (sequelize) => {
         userId: {
             type: DataTypes.INTEGER,
             primaryKey: true,
-            autoIncrement: true 
+            allowNull: false // Se requiere un valor manual
         },
         pass: {
             type: DataTypes.STRING(45),
