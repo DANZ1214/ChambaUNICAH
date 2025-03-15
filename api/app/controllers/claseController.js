@@ -4,9 +4,7 @@ const db = require('../config/db')
 const clase = db.clase;
 
 async function getClase(req, res) {
-    clase.findAll({
-        attributes: ['id_clase', 'nombre_clase' ] // Seleccionar solo estas columnas
-    })
+    clase.findAll()
     .then(result => {
         res.status(200).json(result)
     })
