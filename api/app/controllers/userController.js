@@ -73,9 +73,31 @@ async function deleteUser(req, res) {
     }
 }
 
+async function login(req, res) {
+    const { userId, pass } = req.body;
+
+    if (!userId || !pass) {
+        return res.status(400).json({ message: "Usuario y contraseña requeridos" });
+    }
+
+    try {
+        const userFound = await user.findOne({ where: { userId, pass } });
+
+        if (userFound) {
+            res.status(200).json({ message: "Inicio de sesión exitoso", user: userFound });
+        } else {
+            res.status(401).json({ message: "Credenciales incorrectas" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message || "Error en el servidor" });
+    }
+}
+
+
 module.exports = {
     getUser,
     insertUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    login
 };

@@ -8,5 +8,7 @@ apiRoutes.get('/getUser', userController.getUser);
 apiRoutes.post('/insertUser', userController.insertUser);
 apiRoutes.put('/updateUser', userController.updateUser);
 apiRoutes.delete('/deleteUser', userController.deleteUser);
+apiRoutes.post('/login', userController.login);
+
 
 module.exports = apiRoutes;

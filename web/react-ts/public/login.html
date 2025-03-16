@@ -1,12 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Excusa</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Document</title>
 </head>
-<body>
-    
+<body class="d-flex justify-content-center align-items-center vh-100 bg-light">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white text-center fw-bold">
+                        EXCUSA
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="https://i.postimg.cc/NfcLn1tB/image-removebg-preview-65.png" alt="Logo Unicah" class="img-fluid mb-3" width="100">
+                        
+                        <form id="loginForm">
+                            <div class="mb-3 text-start">
+                                <label for="usuario" class="form-label">Usuario:</label>
+                                <input type="text" id="usuario" class="form-control" placeholder="Ingrese su usuario" required>
+                            </div>
+                            <div class="mb-3 text-start">
+                                <label for="contrasena" class="form-label">Contraseña:</label>
+                                <input type="password" id="contrasena" class="form-control" placeholder="Ingrese su contraseña" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+                            <div id="errorMensaje" class="text-danger mt-2" style="display: none;"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Evita el envío normal del formulario
+
+            let usuario = document.getElementById('usuario').value;
+            let contrasena = document.getElementById('contrasena').value;
+
+            try {
+                let response = await fetch('http://localhost:3008/api/unicah/user/login', { 
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: usuario, pass: contrasena }) // Aquí ajustamos los nombres
+                });
+
+                let data = await response.json();
+
+                if (response.ok) {
+                    console.log("Inicio de sesión exitoso:", data);
+                    window.location.href = 'menu.html'; // Redirige a la pantalla de excusa
+                } else {
+                    document.getElementById('errorMensaje').innerText = data.message || 'Usuario o contraseña incorrectos';
+                    document.getElementById('errorMensaje').style.display = 'block';
+                }
+
+            } catch (error) {
+                console.error("Error en la autenticación:", error);
+                document.getElementById('errorMensaje').innerText = 'Error de conexión con el servidor';
+                document.getElementById('errorMensaje').style.display = 'block';
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
