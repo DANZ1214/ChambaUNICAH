@@ -23,19 +23,22 @@ async function getExcusa(req, res) {
  * Inserta una nueva excusa en la base de datos. 
  */
 async function insertExcusa(req, res) {
-    // Extrae los campos de la excusa del cuerpo de la solicitud.
-    const { id_excusa, alumnoId, razon, archivo, fecha_solicitud, estado } = req.body;
+    const { id_excusa, alumnoId, razon, fecha_solicitud, estado } = req.body;
+    const archivo = req.body.archivo || null; // Si no se envía, será null
+
+    if (!razon) {
+        return res.status(400).send({ message: "La razón es obligatoria" });
+    }
 
     excusa.create({ id_excusa, alumnoId, razon, archivo, fecha_solicitud, estado })
-        .then(result => {
-            // Responde con un código de estado 201 (Creado) y un mensaje de éxito, incluyendo la nueva excusa creada.
-            res.status(201).send({ message: "Excusa creada exitosamente", result });
-        })
-        .catch(error => {
-            // Si ocurre un error, responde con un código de estado 500 (Error interno del servidor) y un mensaje de error.
-            res.status(500).send({ message: error.message || "Error al insertar excusa" });
-        });
+    .then(result => {
+        res.status(201).send({ message: "Excusa creada exitosamente", result });
+    })
+    .catch(error => {
+        res.status(500).send({ message: error.message || "Error al insertar excusa" });
+    });
 }
+
 
 /**
  * Elimina una excusa de la base de datos. 

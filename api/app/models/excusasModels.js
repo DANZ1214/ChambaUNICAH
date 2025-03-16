@@ -32,7 +32,8 @@ module.exports = (sequelize) => {
          * Referencia al archivo adjunto a la excusa.
          */
         archivo: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING, 
+            allowNull: true // Permite valores nulos
         },
         /**
          * Fecha de solicitud de la excusa.

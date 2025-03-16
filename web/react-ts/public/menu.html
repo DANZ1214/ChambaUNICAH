@@ -54,32 +54,34 @@
 
     <script>
         async function enviarExcusa() {
-            const razon = document.querySelector('input[name="reason"]:checked')?.value;
-            const descripcion = document.getElementById('description').value;
-            const archivo = document.getElementById('fileInput').files[0];
-            
-            if (!razon || !descripcion || !archivo) {
-                alert("Por favor, completa todos los campos");
-                return;
-            }
-            
-            const formData = new FormData();
-            formData.append("razon", razon);
-            formData.append("descripcion", descripcion);
-            formData.append("archivo", archivo);
-            
-            try {
-                const response = await fetch("/api/unicah/excusa/insertExcusa", {
-                    method: "POST",
-                    body: formData
-                });
-                const data = await response.json();
-                alert(data.message);
-            } catch (error) {
-                console.error("Error al enviar la excusa", error);
-                alert("Error al enviar la excusa");
-            }
+        const razon = document.querySelector('input[name="reason"]:checked')?.value;
+        const descripcion = document.getElementById('description').value;
+        const archivo = document.getElementById('fileInput').files[0];
+
+        if (!razon || !descripcion) {
+            alert("Por favor, selecciona una razón y escribe una descripción");
+            return;
         }
+
+        const formData = new FormData();
+        formData.append("razon", razon);
+        formData.append("descripcion", descripcion);
+        if (archivo) {
+            formData.append("archivo", archivo); // Solo se envía si hay un archivo seleccionado
+        }
+
+        try {
+            const response = await fetch("/api/unicah/excusa/insertExcusa", {
+                method: "POST",
+                body: formData
+            });
+            const data = await response.json();
+            alert(data.message);
+        } catch (error) {
+            console.error("Error al enviar la excusa", error);
+            alert("Error al enviar la excusa");
+        }
+    }
     </script>
 </body>
 </html>
