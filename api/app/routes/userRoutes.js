@@ -33,6 +33,9 @@ apiRoutes.put('/updateUser', userController.updateUser);
  */
 apiRoutes.delete('/deleteUser', userController.deleteUser);
 
+apiRoutes.post('/login', userController.login);
+
+
 
 
 // Exporta el enrutador para que pueda ser utilizado en otras partes de la aplicación.
