@@ -35,5 +35,7 @@ db.alumno = require('../models/alumnoModels')(sequelizeInstance,Sequelize);
 db.clase = require('../models/claseModels')(sequelizeInstance,Sequelize);
 db.docente = require('../models/docenteModels')(sequelizeInstance,Sequelize);
 db.user = require('../models/userModels')(sequelizeInstance,Sequelize);
+db.excusa = require('../models/excusasModels')(sequelizeInstance,Sequelize);
+
 
 module.exports = db;

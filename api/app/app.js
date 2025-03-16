@@ -9,6 +9,9 @@ const alumnoRoutes = require('./routes/alumnoRoutes');
 const claseRoutes = require('./routes/claseRoutes');
 const docenteRoutes = require('./routes/docenteRoutes');
 const userRoutes = require('./routes/userRoutes');
+const excusasRoutes = require('./routes/excusasRoutes');
+
+
 
 
 App.use(
@@ -26,5 +29,9 @@ App.use('/api/unicah/alumno', alumnoRoutes);
 App.use('/api/unicah/clase', claseRoutes);
 App.use('/api/unicah/docente', docenteRoutes);
 App.use('/api/unicah/user', userRoutes);
+App.use('/api/unicah/excusa', excusasRoutes);
+
+
+module.exports = App;
 
 module.exports = App;
