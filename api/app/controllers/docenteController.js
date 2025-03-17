@@ -1,5 +1,6 @@
 'use strict';
 
+// Importa la configuración de la base de datos
 const db = require('../config/db');
 const Docente = db.docente;
 
@@ -17,6 +18,7 @@ async function getDocente(req, res) {
 async function insertDocente(req, res) {
     const { docenteId, email, nombre } = req.body;
 
+    // Verifica que los campos obligatorios no estén vacíos
     if (!docenteId || !email || !nombre) {
         return res.status(400).send({ message: "Todos los campos son obligatorios" });
     }
@@ -33,6 +35,7 @@ async function insertDocente(req, res) {
 async function updateDocente(req, res) {
     const { docenteId, email, nombre } = req.body;
 
+    // Verifica que los campos obligatorios no estén vacíos
     if (!docenteId || !email || !nombre) {
         return res.status(400).send({ message: "Todos los campos son obligatorios" });
     }
@@ -54,6 +57,7 @@ async function updateDocente(req, res) {
 async function deleteDocente(req, res) {
     const { docenteId } = req.body;
 
+    // Verifica que los campos obligatorios no estén vacíos
     if (!docenteId) {
         return res.status(400).send({ message: "Se requiere un docenteId válido" });
     }
@@ -71,6 +75,7 @@ async function deleteDocente(req, res) {
     }
 }
 
+// Exporta las funciones del controlador para su uso en las rutas.
 module.exports = {
     getDocente,
     insertDocente,

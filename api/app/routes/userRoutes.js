@@ -6,6 +6,8 @@ const express = require('express');
 const userController = require('../controllers/userController');
 // Crea una nueva instancia de enrutador de express.
 const apiRoutes = express.Router();
+// Importa el middleware de autenticación.
+const auth = require('../middlewares/auth')
 
 /**
  * Define las rutas de la API para las operaciones relacionadas con los usuarios.
@@ -16,27 +18,24 @@ const apiRoutes = express.Router();
 /**
  * Ruta para obtener todos los usuarios.
  */
-apiRoutes.get('/getUser', userController.getUser);
+apiRoutes.get('/getUser', auth.isAuth, async (req, res) => await userController.getUser(req, res));
 
 /**
  * Ruta para insertar un nuevo usuario.
  */
-apiRoutes.post('/insertUser', userController.insertUser);
+apiRoutes.post('/insertUser', auth.isAuth, async (req, res) => await userController.insertUser(req, res));
 
 /**
  * Ruta para actualizar un usuario existente.
  */
-apiRoutes.put('/updateUser', userController.updateUser);
+apiRoutes.put('/updateUser', auth.isAuth, async (req, res) => await userController.updateUser(req, res));
 
 /**
  * Ruta para eliminar un usuario existente.
  */
-apiRoutes.delete('/deleteUser', userController.deleteUser);
+apiRoutes.delete('/deleteUser', auth.isAuth, async (req, res) => await userController.deleteUser(req, res));
 
-apiRoutes.post('/login', userController.login);
-
-
-
+apiRoutes.post('/login', auth.isAuth, async (req, res) => await userController.login(req, res));
 
 // Exporta el enrutador para que pueda ser utilizado en otras partes de la aplicación.
 module.exports = apiRoutes;

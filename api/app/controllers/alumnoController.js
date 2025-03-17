@@ -1,13 +1,13 @@
 'use strict'
 
 const db = require('../config/db')
-const alumno = db.alumno;
+const alumno = db.alumno; // Modelo de la tabla "alumno"
 
 // Obtener un nuevo alumno
 async function getAlumno(req, res) {
     alumno.findAll()
     .then(result => {
-        res.status(200).json(result)
+        res.status(200).json(result)// Responde con la lista de alumnos.
     })
     .catch(error => {
         res.status(500).json({ message: error.message || "Sucedió un error inesperado" })
@@ -27,15 +27,16 @@ async function insertAlumno(req, res) {
     });
 }
 
+// Eliminar a un alumno existente
 async function deleteAlumno(req, res) {
     const { alumnoId } = req.body; // Obtener el ID desde el cuerpo de la solicitud
 
     if (!alumnoId) {
-        return res.status(400).send({ message: "Se requiere un alumnoId válido" });
+        return res.status(400).send({ message: "Se requiere un alumnoId válido" }); // Verifica que el ID sea válido.
     }
 
     alumno.destroy({
-        where: { alumnoId }
+        where: { alumnoId } // Elimina el alumno con el ID especificado.
     })
     .then(deleted => {
         if (deleted) {
@@ -49,11 +50,12 @@ async function deleteAlumno(req, res) {
     });
 }
 
+// Actualizar datos a un alumno existente
 async function updateAlumno(req, res) {
-    const { alumnoId, nombre, facultadId } = req.body; // Recibimos los datos
+    const { alumnoId, nombre, facultadId } = req.body; // Extrae los datos del cuerpo de la solicitud.s
 
     if (!alumnoId || !nombre || !facultadId) {
-        return res.status(400).send({ message: "Todos los campos son obligatorios" });
+        return res.status(400).send({ message: "Todos los campos son obligatorios" }); // Verifica que todos los datos estén presentes.
     }
 
     alumno.update(
@@ -72,10 +74,7 @@ async function updateAlumno(req, res) {
     });
 }
 
-
-
-
-
+// Exporta las funciones del controlador para su uso en las rutas.
 module.exports = {
     getAlumno,
     insertAlumno,

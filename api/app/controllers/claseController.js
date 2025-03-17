@@ -1,5 +1,6 @@
 'use strict';
 
+// Importa la configuración de la base de datos
 const db = require('../config/db');
 const Clase = db.clase;
 
@@ -17,6 +18,7 @@ async function getClase(req, res) {
 async function insertClase(req, res) {
     const { id_clase, nombre_clase } = req.body;
 
+    // Verifica que los campos obligatorios no estén vacíos
     if (!id_clase || !nombre_clase) {
         return res.status(400).send({ message: "Todos los campos son obligatorios" });
     }
@@ -33,6 +35,7 @@ async function insertClase(req, res) {
 async function updateClase(req, res) {
     const { id_clase, nombre_clase } = req.body;
 
+    // Verifica que los campos obligatorios no estén vacíos
     if (!id_clase || !nombre_clase) {
         return res.status(400).send({ message: "Todos los campos son obligatorios" });
     }
@@ -54,6 +57,7 @@ async function updateClase(req, res) {
 async function deleteClase(req, res) {
     const { id_clase } = req.body;
 
+    // Verifica que el ID de la clase sea proporcionado
     if (!id_clase) {
         return res.status(400).send({ message: "Se requiere un id_clase válido" });
     }
@@ -71,6 +75,7 @@ async function deleteClase(req, res) {
     }
 }
 
+// Exporta las funciones del controlador para su uso en las rutas.
 module.exports = {
     getClase,
     insertClase,
