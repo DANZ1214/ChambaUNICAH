@@ -56,7 +56,6 @@ db.user = require('../models/userModels')(sequelizeInstance, Sequelize);
 // Importa y define el modelo de excusa.
 db.excusa = require('../models/excusasModels')(sequelizeInstance, Sequelize);
 
-db.usuario = require('../models/usuarioModels')(sequelizeInstance, Sequelize);
 
 
 // Exporta el objeto db para que pueda ser utilizado en otros módulos.

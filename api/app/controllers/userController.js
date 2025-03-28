@@ -1,12 +1,16 @@
 'use strict';
 
+const { result } = require('lodash');
 // Importa la configuración de la base de datos y el modelo de usuario.
 const db = require('../config/db');
 const user = db.user;
 
+
 /**
  * Obtiene todos los usuarios de la base de datos.
  */
+
+
 async function getUser(req, res) {
     try {
         // Busca todos los usuarios en la base de datos.
