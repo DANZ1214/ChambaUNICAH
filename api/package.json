@@ -4,7 +4,7 @@
   "description": "Es un api para la chamba de la U",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",   
+    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon index.js"
   },
   "keywords": [
@@ -22,6 +22,7 @@
     "express": "^4.21.2",
     "jwt-simple": "^0.5.6",
     "lodash": "^4.17.21",
+    "multer": "^1.4.5-lts.2",
     "mysql2": "^3.12.0",
     "nodemon": "^3.1.9",
     "sequelize": "^6.37.6"

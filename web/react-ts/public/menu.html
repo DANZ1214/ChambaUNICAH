@@ -11,7 +11,7 @@
         <h2 class="text-primary">SISTEMA DE EXCUSAS UNICAH</h2>
         <img src="https://i.postimg.cc/NfcLn1tB/image-removebg-preview-65.png" alt="Escudo UNICAH" class="img-fluid mb-3" width="120">
         <h3>BIENVENIDO</h3>
-        
+
         <div class="alert alert-primary mt-3">SELECCIONA UNA RAZÓN</div>
         <div class="d-flex flex-wrap justify-content-around">
             <div class="form-check">
@@ -39,49 +39,75 @@
                 </label>
             </div>
         </div>
-        
+
         <div class="mt-3 text-start">
             <label for="description" class="form-label">Describe la inasistencia:</label>
-            <textarea id="description" class="form-control" rows="3"></textarea>
+            <textarea id="description" class="form-control" rows="3" required></textarea>
         </div>
-        
+
         <div class="mt-3">
-            <input type="file" id="fileInput" class="form-control">
+            <label for="fileInput" class="form-label">Seleccionar archivo (opcional):</label>
+            <input type="file" id="fileInput" class="form-control" name="archivo">
         </div>
-        
+
         <button class="btn btn-primary mt-3" onclick="enviarExcusa()">ENVIAR</button>
     </div>
 
     <script>
         async function enviarExcusa() {
-        const razon = document.querySelector('input[name="reason"]:checked')?.value;
-        const descripcion = document.getElementById('description').value;
-        const archivo = document.getElementById('fileInput').files[0];
+            const razon = document.querySelector('input[name="reason"]:checked')?.value;
+            const descripcion = document.getElementById('description').value;
+            const archivo = document.getElementById('fileInput').files[0];
 
-        if (!razon || !descripcion) {
-            alert("Por favor, selecciona una razón y escribe una descripción");
-            return;
+            if (!razon) {
+                alert("Por favor, selecciona una razón");
+                return;
+            }
+            if (!descripcion) {
+                alert("Por favor, escribe una descripción");
+                return;
+            }
+
+            const formData = new FormData();
+            // Ya no necesitamos enviar el alumboId desde este formulario
+            // formData.append("alumboId", alumboId);
+            formData.append("razon", razon);
+            formData.append("descripcion", descripcion);
+            if (archivo) {
+                formData.append("archivo", archivo);
+            }
+
+            try {
+                // Aquí deberías tener acceso al ID del alumno desde tu sistema de autenticación
+                // Por ejemplo, podrías tenerlo almacenado en localStorage, sessionStorage, o en una cookie.
+                const alumboId = obtenerIdAlumno(); // Reemplaza esto con tu lógica para obtener el ID del alumno
+
+                if (!alumboId) {
+                    alert("Error: No se pudo obtener el ID del alumno.");
+                    return;
+                }
+
+                const response = await fetch(`/api/unicah/excusa/insertExcusa?alumboId=${alumboId}`, { // Envía el ID como parámetro de consulta
+                    method: "POST",
+                    body: formData
+                });
+                const data = await response.json();
+                alert(data.message);
+            } catch (error) {
+                console.error("Error al enviar la excusa", error);
+                alert("Error al enviar la excusa");
+            }
         }
 
-        const formData = new FormData();
-        formData.append("razon", razon);
-        formData.append("descripcion", descripcion);
-        if (archivo) {
-            formData.append("archivo", archivo); // Solo se envía si hay un archivo seleccionado
+        // Función de ejemplo para obtener el ID del alumno (debes implementarla según tu sistema de login)
+        function obtenerIdAlumno() {
+            // Aquí iría tu lógica para obtener el ID del alumno autenticado
+            // Por ejemplo:
+            // return localStorage.getItem('alumnoId');
+            // return sessionStorage.getItem('alumnoId');
+            // O alguna otra forma de acceder al ID del usuario logueado
+            return 1; // Valor de ejemplo
         }
-
-        try {
-            const response = await fetch("/api/unicah/excusa/insertExcusa", {
-                method: "POST",
-                body: formData
-            });
-            const data = await response.json();
-            alert(data.message);
-        } catch (error) {
-            console.error("Error al enviar la excusa", error);
-            alert("Error al enviar la excusa");
-        }
-    }
     </script>
 </body>
 </html>

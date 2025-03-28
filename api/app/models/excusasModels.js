@@ -1,68 +1,48 @@
 'use strict';
 
-// Importa la clase DataTypes de Sequelize para definir los tipos de datos de las columnas.
 const { DataTypes } = require('sequelize');
 
-/**
- * Define el modelo de la tabla 'excusa' en la base de datos utilizando Sequelize.
- */
 module.exports = (sequelize) => {
-    // Define los atributos (columnas) de la tabla 'excusa'.
     const attributes = {
-        /**
-         * Identificador único de la excusa.
-         */
         id_excusa: {
             type: DataTypes.INTEGER,
             primaryKey: true,
+            autoIncrement: true, // Añadido para que sea autoincremental
         },
-        /**
-         * Identificador del alumno asociado a la excusa.
-         */
-        alumboId: {
+        alumnoId: {
             type: DataTypes.INTEGER,
+            allowNull: false, // El ID del alumno es obligatorio
         },
-        /**
-         * Razón de la excusa.
-         */
         razon: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.ENUM('Enfermedad', 'Luto', 'Viaje', 'Otro'), // Corregido a ENUM
+            allowNull: false, // La razón es obligatoria
         },
-        /**
-         * Referencia al archivo adjunto a la excusa.
-         */
         archivo: {
-            type: DataTypes.STRING, 
-            allowNull: true // Permite valores nulos
+            type: DataTypes.STRING(255),
+            allowNull: true
         },
-        /**
-         * Fecha de solicitud de la excusa.
-         */
         fecha_solicitud: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.DATE, // Cambiado a DATE para mayor claridad (TIMESTAMP también funcionaría)
+            defaultValue: DataTypes.NOW, // Establece el valor por defecto a la fecha y hora actual
         },
-        /**
-         * Estado de la excusa (por ejemplo, 'pendiente', 'aprobada', 'rechazada').
-         */
         estado: {
             type: DataTypes.STRING(45),
+            defaultValue: 'Pendiente', // Establece el estado por defecto como 'Pendiente'
         },
+        descripcion: { // Nuevo campo para la descripción
+            type: DataTypes.STRING(255),
+            allowNull: false, // La descripción es obligatoria
+        }
     };
 
-    // Define las opciones del modelo.
     const options = {
-        // Ámbito predeterminado del modelo, excluye las columnas 'createdAt' y 'updatedAt' en las consultas.
         defaultScope: {
             attributes: { exclude: ['createdAt', 'updatedAt'] },
         },
-        // Ámbitos adicionales del modelo (actualmente vacío).
         scopes: {},
-        // Nombre de la tabla en la base de datos.
-        tableName: 'excusa',
-        // Indica que la tabla no tiene columnas 'createdAt' y 'updatedAt' (desactiva los timestamps automáticos).
-        timestamps: false,
+        tableName: 'excusas', // Corregido el nombre de la tabla a 'excusas' (plural)
+        timestamps: true, // Reactivamos los timestamps automáticos (createdAt y updatedAt)
     };
 
-    // Define el modelo 'excusa' utilizando Sequelize y lo devuelve.
     return sequelize.define('excusa', attributes, options);
 };
