@@ -3,6 +3,7 @@
 // Importa los módulos necesarios: express para la creación del servidor, y cors para habilitar CORS.
 const express = require('express');
 const cors = require('cors');
+
 // Crea una instancia de la aplicación express.
 const App = express();
 
@@ -23,20 +24,19 @@ App.use(
 );
 
 // Configura middleware para el manejo de JSON y datos de formularios.
-App.use(cors()); // Configura CORS (redundante, pero se mantiene para compatibilidad).
-App.use(express.json({ limit: '10mb' })); // Habilita el análisis de JSON con un límite de 10MB.
-App.use(express.urlencoded({ extended: false })); // Habilita el análisis de datos de formularios codificados en URL.
+App.use(express.json({ limit: '10mb' }));
+App.use(express.urlencoded({ extended: false }));
 
 /**  
  * Define los endpoints de la API para las diferentes entidades
  */
-
-// Asocia los enrutadores a las rutas base de la API.
 App.use('/api/unicah/alumno', alumnoRoutes);
 App.use('/api/unicah/clase', claseRoutes);
 App.use('/api/unicah/docente', docenteRoutes);
 App.use('/api/unicah/user', userRoutes);
 App.use('/api/unicah/excusa', excusasRoutes);
 
-// Exporta la instancia de la aplicación express para que pueda ser utilizada en otros módulos.
-module.exports = App;
+const PORT = 3008;
+App.listen(PORT, '0.0.0.0', () => {
+    console.log(`🔥 Servidor corriendo en http://0.0.0.0:${PORT}`);
+});

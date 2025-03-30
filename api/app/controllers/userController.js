@@ -122,13 +122,23 @@ async function login(req, res) {
     try {
         const userFound = await user.findOne({ where: { userId, pass } });
 
-        if (userFound) {
-            res.status(200).json({ message: "Inicio de sesión exitoso", user: userFound });
-        } else {
-            res.status(401).json({ message: "Credenciales incorrectas" });
+        if (!userFound) {
+            return res.status(401).json({ message: "Credenciales incorrectas" });
         }
+
+        // Buscar el alumno correspondiente (si existe)
+        const alumno = await db.alumno.findOne({ where: { userId } });
+
+        const responseData = {
+            message: "Inicio de sesión exitoso",
+            user: userFound,
+            alumnoId: alumno?.alumnoId || null // si no es alumno, se manda null
+        };
+
+        return res.status(200).json(responseData);
     } catch (error) {
-        res.status(500).json({ message: error.message || "Error en el servidor" });
+        console.error("Error en login:", error);
+        return res.status(500).json({ message: error.message || "Error en el servidor" });
     }
 }
 
