@@ -127,15 +127,15 @@ async function login(req, res) {
         }
 
         // Buscar el alumno correspondiente (si existe)
-        const alumno = await db.alumno.findOne({ where: { userId } });
+        const alumno = await db.alumno.findOne({ where: { alumnoId: userId } });
 
         const responseData = {
             message: "Inicio de sesión exitoso",
             user: userFound,
             alumnoId: alumno?.alumnoId || null // si no es alumno, se manda null
         };
-
         return res.status(200).json(responseData);
+
     } catch (error) {
         console.error("Error en login:", error);
         return res.status(500).json({ message: error.message || "Error en el servidor" });

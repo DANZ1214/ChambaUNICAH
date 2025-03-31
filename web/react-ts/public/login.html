@@ -52,8 +52,9 @@
 
                 let data = await response.json();
 
-                if (response.ok) {
+                if (response.ok) {                    
                     console.log("Inicio de sesión exitoso:", data);
+                    sessionStorage.setItem('alumnoId', data.alumnoId); // Guarda el alumnoId en sessionStorage
                     window.location.href = 'menu.html'; // Redirige a la pantalla de excusa
                 } else {
                     document.getElementById('errorMensaje').innerText = data.message || 'Usuario o contraseña incorrectos';

@@ -14,8 +14,7 @@ async function getExcusa(req, res) {
 }
 
 async function insertExcusa(req, res) {
-    const { razon, descripcion } = req.body;
-    const alumnoId = req.query.alumnoId; // Obtiene el alumnoId del query parameter
+    const { razon, descripcion, alumnoId } = req.body; // Obtiene el alumnoId del cuerpo de la petición
     const archivo = req.file ? req.file.filename : null;
 
     if (!alumnoId) {

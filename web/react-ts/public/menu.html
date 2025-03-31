@@ -54,60 +54,54 @@
     </div>
 
     <script>
-        async function enviarExcusa() {
-            const razon = document.querySelector('input[name="reason"]:checked')?.value;
-            const descripcion = document.getElementById('description').value;
-            const archivo = document.getElementById('fileInput').files[0];
+ async function enviarExcusa() {
+            const razon = document.querySelector('input[name="reason"]:checked')?.value;
+            const descripcion = document.getElementById('description').value;
+            const archivo = document.getElementById('fileInput').files[0];
 
-            if (!razon) {
-                alert("Por favor, selecciona una razón");
-                return;
-            }
-            if (!descripcion) {
-                alert("Por favor, escribe una descripción");
-                return;
-            }
+            if (!razon) {
+                alert("Por favor, selecciona una razón");
+                return;
+            }
+            if (!descripcion) {
+                alert("Por favor, escribe una descripción");
+                return;
+            }
 
-            const formData = new FormData();
-            // Ya no necesitamos enviar el alumnoId desde este formulario
-            // formData.append("alumnoId", alumnoId);
-            formData.append("razon", razon);
-            formData.append("descripcion", descripcion);
-            if (archivo) {
-                formData.append("archivo", archivo);
-            }
+            const alumnoId = obtenerIdAlumno();
 
-            try {
-                // Aquí deberías tener acceso al ID del alumno desde tu sistema de autenticación
-                // Por ejemplo, podrías tenerlo almacenado en localStorage, sessionStorage, o en una cookie.
-                const alumnoId = obtenerIdAlumno(); // Reemplaza esto con tu lógica para obtener el ID del alumno
+            if (!alumnoId) {
+                alert("Error: No se pudo obtener el ID del alumno.");
+                return;
+            }
 
-                if (!alumnoId) {
-                    alert("Error: No se pudo obtener el ID del alumno.");
-                    return;
-                }
+            const excuseData = {
+                alumnoId: alumnoId, // Incluimos el alumnoId en el objeto JSON
+                razon: razon,
+                descripcion: descripcion
+            };
 
-                const response = await fetch(`/api/unicah/excusa/insertExcusa?alumnoId=${alumnoId}`, { // Envía el ID como parámetro de consulta
-                    method: "POST",
-                    body: formData
-                });
-                const data = await response.json();
-                alert(data.message);
-            } catch (error) {
-                console.error("Error al enviar la excusa", error);
-                alert("Error al enviar la excusa");
-            }
-        }
+            try {
+                    const response = await fetch(`http://localhost:3008/api/unicah/excusa/insertExcusa`, { // Ya no pasamos el alumnoId por la URL
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json' // Indicamos que enviamos JSON
+                    },
+                    body: JSON.stringify(excuseData) // Convertimos el objeto a una cadena JSON
+                });
+                const data = await response.json();
+                alert(data.message);
+            } catch (error) {
+                console.error("Error al enviar la excusa", error);
+                alert("Error al enviar la excusa");
+            }
+        }
 
-        // Función de ejemplo para obtener el ID del alumno (debes implementarla según tu sistema de login)
+        
         function obtenerIdAlumno() {
-            // Aquí iría tu lógica para obtener el ID del alumno autenticado
-            // Por ejemplo:
-            // return localStorage.getItem('alumnoId');
-            // return sessionStorage.getItem('alumnoId');
-            // O alguna otra forma de acceder al ID del usuario logueado
-            return 1; // Valor de ejemplo
-        }
+            return sessionStorage.getItem('alumnoId'); 
+        }   
+
     </script>
 </body>
 </html>
