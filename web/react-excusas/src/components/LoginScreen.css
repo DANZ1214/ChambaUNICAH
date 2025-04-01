@@ -1,0 +1,23 @@
+/* src/components/LoginScreen.css */
+.container {
+  width: 100%; /* O prueba con un valor fijo como 400px */
+  max-width: 400px; /* Limita el ancho máximo si es necesario */
+  padding: 20px;
+}
+
+.card {
+  width: 100%;
+}
+
+.form-control {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.btn-primary {
+  width: 100%;
+}
+
+.text-danger {
+  margin-top: 10px;
+}

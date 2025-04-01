@@ -66,3 +66,9 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+html, body {
+  height: 100%; /* Asegura que ocupen toda la altura */
+  margin: 0; /* Elimina márgenes predeterminados */
+  padding: 0; /* Elimina paddings predeterminados */
+}
