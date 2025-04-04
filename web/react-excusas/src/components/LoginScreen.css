@@ -1,23 +1,21 @@
-/* src/components/LoginScreen.css */
-.container {
-  width: 100%; /* O prueba con un valor fijo como 400px */
-  max-width: 400px; /* Limita el ancho máximo si es necesario */
-  padding: 20px;
+body {
+  background-color: #f8f9fa;
 }
 
 .card {
-  width: 100%;
+  border-radius: 10px;
 }
 
-.form-control {
-  width: 100%;
-  margin-bottom: 10px;
+.text-primary {
+  color: #003366 !important;
 }
 
 .btn-primary {
-  width: 100%;
+  background-color: #003366;
+  border-color: #003366;
 }
 
-.text-danger {
-  margin-top: 10px;
+.btn-primary:hover {
+  background-color: #002244;
+  border-color: #002244;
 }
