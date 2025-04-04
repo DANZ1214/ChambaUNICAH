@@ -1,5 +1,10 @@
-body {
+html, body {
   background-color: #f8f9fa;
+  overflow-x: hidden; /* Evita desplazamiento horizontal */
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .card {

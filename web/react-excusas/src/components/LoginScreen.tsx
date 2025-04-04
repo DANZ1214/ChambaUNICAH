@@ -36,7 +36,7 @@ const LoginScreen = () => {
   };
 
   return (
-    <div className="container-fluid vh-100 d-flex flex-column justify-content-center align-items-center bg-white">
+    <div className="container-fluid vh-100 w-100 d-flex flex-column justify-content-center align-items-center bg-white">
       <div className="text-center mb-4">
         <img
           src="https://i.postimg.cc/NfcLn1tB/image-removebg-preview-65.png"
