@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './LoginScreen.css';
 
@@ -6,6 +7,7 @@ const LoginScreen = () => {
   const [usuario, setUsuario] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [errorMensaje, setErrorMensaje] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (event: { preventDefault: () => void; }) => {
     event.preventDefault();
@@ -23,7 +25,7 @@ const LoginScreen = () => {
       if (response.ok) {
         console.log('Inicio de sesión exitoso:', data);
         sessionStorage.setItem('alumnoId', data.alumnoId);
-        window.location.href = '/menu';
+        navigate('/excusa-alumno'); // Redirige a la pantalla de excusas
       } else {
         setErrorMensaje(data.message || 'Usuario o contraseña incorrectos');
       }
