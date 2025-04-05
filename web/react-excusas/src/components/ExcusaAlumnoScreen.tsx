@@ -16,12 +16,11 @@ function ExcusaAlumnoScreen() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Verificar si el alumnoId está en sessionStorage
     const storedAlumnoId = sessionStorage.getItem('alumnoId');
     if (storedAlumnoId) {
       setAlumnoId(Number(storedAlumnoId));
     } else {
-      navigate('/'); // Redirigir al login si no está logueado
+      navigate('/'); // Redirigir al login si no hay alumnoId
     }
   }, [navigate]);
 
@@ -41,8 +40,13 @@ function ExcusaAlumnoScreen() {
       return;
     }
 
+    if (!alumnoId) {
+      alert('No se ha identificado al alumno. Vuelve a iniciar sesión.');
+      return;
+    }
+
     const formData = new FormData();
-    formData.append('alumnoId', String(alumnoId));
+    formData.append('alumnoId', alumnoId.toString());
     formData.append('razon', selectedReason);
     formData.append('descripcion', description);
     if (selectedFile) {
@@ -51,11 +55,8 @@ function ExcusaAlumnoScreen() {
 
     try {
       const response = await axios.post<ApiResponse>(
-        'http://localhost:3008/api/excusas/insertExcusa',
-        formData,
-        {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        }
+        'http://localhost:3008/api/unicah/excusa/insertExcusa',  // Ruta corregida
+        formData
       );
 
       alert(response.data.message);
@@ -82,30 +83,17 @@ function ExcusaAlumnoScreen() {
         <div className="alert alert-primary mt-3">SELECCIONA UNA RAZÓN</div>
 
         <div className="d-flex flex-wrap justify-content-around">
-          <ReasonOption 
-            value="Enfermedad" label="Enfermedad" 
-            imageUrl="https://i.postimg.cc/3J052qVw/image-removebg-preview-55.png" 
-            name="reason" onChange={handleReasonChange} 
-            checked={selectedReason === 'Enfermedad'} 
-          />
-          <ReasonOption 
-            value="Luto" label="Luto" 
-            imageUrl="https://i.postimg.cc/T1ZskRF3/image-removebg-preview-67.png" 
-            name="reason" onChange={handleReasonChange} 
-            checked={selectedReason === 'Luto'} 
-          />
-          <ReasonOption 
-            value="Viaje" label="Viaje" 
-            imageUrl="https://i.postimg.cc/vB2kV7v9/image-removebg-preview-66.png" 
-            name="reason" onChange={handleReasonChange} 
-            checked={selectedReason === 'Viaje'} 
-          />
-          <ReasonOption 
-            value="Otro" label="Otro" 
-            imageUrl="https://i.postimg.cc/5tnkh5TG/image-removebg-preview-68.png" 
-            name="reason" onChange={handleReasonChange} 
-            checked={selectedReason === 'Otro'} 
-          />
+          {['Enfermedad', 'Luto', 'Viaje', 'Otro'].map((razon) => (
+            <ReasonOption 
+              key={razon}
+              value={razon}
+              label={razon}
+              imageUrl={`https://i.postimg.cc/.../${razon}.png`} // Puedes poner URLs según cada razón
+              name="reason"
+              onChange={handleReasonChange}
+              checked={selectedReason === razon}
+            />
+          ))}
         </div>
 
         <div className="mt-3 text-start">
@@ -127,7 +115,7 @@ function ExcusaAlumnoScreen() {
             id="file-upload" 
             className="form-control" 
             onChange={handleFileChange} 
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+            accept=".pdf,.png,.jpg,.jpeg"
           />
           {selectedFile && (
             <p className="mt-2 text-success">Archivo seleccionado: {selectedFile.name}</p>

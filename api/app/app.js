@@ -1,6 +1,5 @@
 'use strict';
 
-// Importa los módulos necesarios: express para la creación del servidor, y cors para habilitar CORS.
 const express = require('express');
 const cors = require('cors');
 
@@ -14,7 +13,6 @@ const docenteRoutes = require('./routes/docenteRoutes');
 const userRoutes = require('./routes/userRoutes');
 const excusasRoutes = require('./routes/excusasRoutes');
 const matriculaRoutes = require('./routes/matriculaRoutes');
-
 
 /**
  * Configura el middleware CORS para permitir solicitudes desde cualquier origen.
@@ -36,11 +34,10 @@ App.use('/api/unicah/alumno', alumnoRoutes);
 App.use('/api/unicah/clase', claseRoutes);
 App.use('/api/unicah/docente', docenteRoutes);
 App.use('/api/unicah/user', userRoutes);
-App.use('/api/unicah/excusa', excusasRoutes);
+App.use('/api/unicah/excusa', excusasRoutes);  // Aquí está la ruta de excusa
 App.use('/api/unicah/matricula', matriculaRoutes);
 
 // Inicia el servidor en el puerto 3008
-
 const PORT = 3008;
 App.listen(PORT, '0.0.0.0', () => {
     console.log(`🔥 Servidor corriendo en http://0.0.0.0:${PORT}`);

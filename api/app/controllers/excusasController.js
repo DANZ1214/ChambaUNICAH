@@ -27,14 +27,13 @@ async function insertExcusa(req, res) {
         return res.status(400).send({ message: "La descripción es obligatoria" });
     }
 
-    excusa.create({ alumnoId, razon, archivo, descripcion })
-        .then(result => {
-            res.status(201).send({ message: "Excusa creada exitosamente", result });
-        })
-        .catch(error => {
-            console.error("Error al insertar excusa:", error); // Log del error en la consola del servidor
-            res.status(500).send({ message: error.message || "Error al insertar excusa" });
-        });
+    try {
+        const result = await excusa.create({ alumnoId, razon, archivo, descripcion });
+        res.status(201).send({ message: "Excusa creada exitosamente", result });
+    } catch (error) {
+        console.error("Error al insertar excusa:", error);
+        res.status(500).send({ message: error.message || "Error al insertar excusa" });
+    }
 }
 
 async function deleteExcusa(req, res) {
