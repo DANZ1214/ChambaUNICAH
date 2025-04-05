@@ -14,7 +14,7 @@ async function getExcusa(req, res) {
 }
 
 async function insertExcusa(req, res) {
-    const { razon, descripcion, alumnoId } = req.body; // Obtiene el alumnoId del cuerpo de la petición
+    const { razon, descripcion, alumnoId } = req.body;
     const archivo = req.file ? req.file.filename : null;
 
     if (!alumnoId) {
@@ -28,16 +28,13 @@ async function insertExcusa(req, res) {
     }
 
     excusa.create({ alumnoId, razon, archivo, descripcion })
-    .then(result => {
-        res.status(201).send({ message: "Excusa creada exitosamente", result });
-    })
-    // .catch(error => {
-    //     res.status(500).send({ message: error.message || "Error al insertar excusa", error: error.errors });
-    // });
-    .catch(error => {
-        console.error("Error al insertar excusa:", error); // Log del error en la consola del servidor
-        res.status(500).send({ message: error.message || "Error al insertar excusa" });
-    });
+        .then(result => {
+            res.status(201).send({ message: "Excusa creada exitosamente", result });
+        })
+        .catch(error => {
+            console.error("Error al insertar excusa:", error); // Log del error en la consola del servidor
+            res.status(500).send({ message: error.message || "Error al insertar excusa" });
+        });
 }
 
 async function deleteExcusa(req, res) {
@@ -63,7 +60,7 @@ async function deleteExcusa(req, res) {
 }
 
 async function updateExcusa(req, res) {
-    const { id_excusa, estado } = req.body; // Solo permitimos actualizar el estado por ahora
+    const { id_excusa, estado } = req.body;
 
     if (!id_excusa || !estado) {
         return res.status(400).send({ message: "El ID de la excusa y el nuevo estado son obligatorios" });

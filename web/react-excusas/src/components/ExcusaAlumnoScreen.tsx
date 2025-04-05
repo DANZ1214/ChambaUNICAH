@@ -1,11 +1,29 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import './ExcusaAlumnoScreen.css';
 import ReasonOption from './ReasonOption';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
+interface ApiResponse {
+  message: string;
+}
 
 function ExcusaAlumnoScreen() {
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [description, setDescription] = useState<string>('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [alumnoId, setAlumnoId] = useState<number | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Verificar si el alumnoId está en sessionStorage
+    const storedAlumnoId = sessionStorage.getItem('alumnoId');
+    if (storedAlumnoId) {
+      setAlumnoId(Number(storedAlumnoId));
+    } else {
+      navigate('/'); // Redirigir al login si no está logueado
+    }
+  }, [navigate]);
 
   const handleReasonChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSelectedReason(event.target.value);
@@ -14,6 +32,39 @@ function ExcusaAlumnoScreen() {
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedReason || !description) {
+      alert('Por favor, completa todos los campos.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('alumnoId', String(alumnoId));
+    formData.append('razon', selectedReason);
+    formData.append('descripcion', description);
+    if (selectedFile) {
+      formData.append('archivo', selectedFile);
+    }
+
+    try {
+      const response = await axios.post<ApiResponse>(
+        'http://localhost:3008/api/excusas/insertExcusa',
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      );
+
+      alert(response.data.message);
+      setSelectedReason(null);
+      setDescription('');
+      setSelectedFile(null);
+    } catch (error) {
+      console.error('Error al enviar la excusa:', error);
+      alert('Ocurrió un error al enviar la excusa.');
     }
   };
 
@@ -57,7 +108,6 @@ function ExcusaAlumnoScreen() {
           />
         </div>
 
-        {/* Campo de descripción */}
         <div className="mt-3 text-start">
           <label htmlFor="description" className="form-label">Describe la inasistencia:</label>
           <textarea 
@@ -70,7 +120,6 @@ function ExcusaAlumnoScreen() {
           ></textarea>
         </div>
 
-        {/* Botón para subir archivos */}
         <div className="mt-3 text-start">
           <label htmlFor="file-upload" className="form-label">Adjuntar documento de respaldo:</label>
           <input 
@@ -85,7 +134,7 @@ function ExcusaAlumnoScreen() {
           )}
         </div>
 
-        <button className="btn btn-primary mt-3">ENVIAR</button>
+        <button className="btn btn-primary mt-3" onClick={handleSubmit}>ENVIAR</button>
       </div>
     </div>
   );
