@@ -7,39 +7,54 @@ module.exports = (sequelize) => {
         matriculaId: {
             type: DataTypes.INTEGER,
             primaryKey: true,
-            autoIncrement: true, // Añadido para que sea autoincremental
+            autoIncrement: true,
         },
         alumnoId: {
-            type: DataTypes.INTEGER,
-            allowNull: false, // El ID del alumno es obligatorio
+            type: DataTypes.STRING(13), // VARCHAR(13)
+            allowNull: false,
+            references: {
+                model: 'alumno', // Nombre del modelo (no de la tabla)
+                key: 'alumnoId'
+            }
         },
         id_clase: {
-            type: DataTypes.INTEGER,
-            allowNull: false, // El ID del alumno es obligatorio
+            type: DataTypes.STRING(10), // VARCHAR(10)
+            allowNull: false,
+            references: {
+                model: 'clases', 
+                key: 'id_clase'
+            }
         },
         docenteId: {
-            type: DataTypes.INTEGER,
-            allowNull: false, // El ID del alumno es obligatorio
+            type: DataTypes.STRING(13), // VARCHAR(13)
+            allowNull: false,
+            references: {
+                model: 'docente', 
+                key: 'docenteId'
+            }
         },
         id_excusa: {
             type: DataTypes.INTEGER,
-            allowNull: false, // El ID del alumno es obligatorio
+            allowNull: true, // Permitir NULL
+            references: {
+                model: 'excusas', 
+                key: 'id_excusa'
+            }
         },               
         estado: {
-            type: DataTypes.ENUM('activo', 'inactivo'), // Valores válidos en MySQL
-            defaultValue: 'activo', // Cambia el valor por defecto
-        },
-        fecha_matricula: {
-            type: DataTypes.DATE, // Cambiado a DATE para mayor claridad (TIMESTAMP también funcionaría)
-            defaultValue: DataTypes.NOW, // Establece el valor por defecto a la fecha y hora actual
+            type: DataTypes.ENUM('activo', 'inactivo'), // ENUM
+            defaultValue: 'activo',
         }
     };
 
     const options = {
+        defaultScope: {
+            attributes: { exclude: ['createdAt', 'updatedAt'] },
+        },
         scopes: {},
-        tableName: 'matriculas', 
-        timestamps: false, 
+        tableName: 'matriculas', // Nombre real de la tabla en MySQL
+        timestamps: false, // Desactiva los timestamps automáticos
     };
 
-    return sequelize.define('matriculas', attributes, options);
+    return sequelize.define('matricula', attributes, options); // Modelo en singular
 };
