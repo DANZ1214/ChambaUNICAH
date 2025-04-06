@@ -13,7 +13,7 @@ apiRoutes.get('/getAlumno', /*auth.isAuth,*/ async(req, res) => await alumnoCont
 
 // Ruta para insertar un nuevo alumno
 // También está protegida por el middleware de autenticación
-apiRoutes.post('/insertAlumno', auth.isAuth, async(req, res) => await alumnoController.insertAlumno(req, res));
+apiRoutes.post('/insertAlumno', /*auth.isAuth,*/ async(req, res) => await alumnoController.insertAlumno(req, res));
 
 // Ruta para eliminar un alumno
 // Protegida por el middleware de autenticación
