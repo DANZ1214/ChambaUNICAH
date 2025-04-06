@@ -9,7 +9,7 @@ const auth = require('../middlewares/auth')
 
 // Ruta para obtener los datos de una clase
 // La ruta está protegida por el middleware de autenticación
-apiRoutes.get('/getClase', auth.isAuth, async(req, res) => await claseController.getClase(req, res));
+apiRoutes.get('/getClase', /*auth.isAuth,*/ async(req, res) => await claseController.getClase(req, res));
 
 // Ruta para insertar una nueva clase
 // También está protegida por el middleware de autenticación

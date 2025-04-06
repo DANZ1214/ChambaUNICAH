@@ -7,7 +7,7 @@ const upload = require('../middlewares/multer'); // Asegúrate de que este archi
 const apiRoutes = express.Router();
 
 // Ruta para obtener las excusas
-apiRoutes.get('/getExcusa', /*auth.isAuth,*/ async (req, res) => await excusaController.getExcusa(req, res));
+apiRoutes.get('/getExcusa', auth.isAuth, async (req, res) => await excusaController.getExcusa(req, res));
 
 // Ruta para insertar una excusa (con subida de archivo)
 apiRoutes.post('/insertExcusa', /*auth.isAuth,*/ upload.single('archivo'), async (req, res) => await excusaController.insertExcusa(req, res));

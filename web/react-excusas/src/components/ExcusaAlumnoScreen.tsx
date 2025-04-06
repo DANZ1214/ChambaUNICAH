@@ -8,11 +8,18 @@ interface ApiResponse {
   message: string;
 }
 
+interface Clase {
+  id: number;
+  nombre: string;
+}
+
 function ExcusaAlumnoScreen() {
   const [selectedReason, setSelectedReason] = useState<string | null>(null);
   const [description, setDescription] = useState<string>('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [alumnoId, setAlumnoId] = useState<number | null>(null);
+  const [clases, setClases] = useState<Clase[]>([]);
+  const [clasesSeleccionadas, setClasesSeleccionadas] = useState<number[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,8 +27,12 @@ function ExcusaAlumnoScreen() {
     if (storedAlumnoId) {
       setAlumnoId(Number(storedAlumnoId));
     } else {
-      navigate('/'); // Redirigir al login si no hay alumnoId
+      navigate('/');
     }
+  
+    axios.get<Clase[]>('http://localhost:3008/api/unicah/clases')
+      .then(res => setClases(res.data))
+      .catch(err => console.error('Error cargando clases:', err));
   }, [navigate]);
 
   const handleReasonChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -34,9 +45,15 @@ function ExcusaAlumnoScreen() {
     }
   };
 
+  const handleCheckboxChange = (id: number) => {
+    setClasesSeleccionadas(prev =>
+      prev.includes(id) ? prev.filter(cid => cid !== id) : [...prev, id]
+    );
+  };
+
   const handleSubmit = async () => {
-    if (!selectedReason || !description) {
-      alert('Por favor, completa todos los campos.');
+    if (!selectedReason || !description || clasesSeleccionadas.length === 0) {
+      alert('Por favor, completa todos los campos y selecciona al menos una clase.');
       return;
     }
 
@@ -49,13 +66,14 @@ function ExcusaAlumnoScreen() {
     formData.append('alumnoId', alumnoId.toString());
     formData.append('razon', selectedReason);
     formData.append('descripcion', description);
+    formData.append('clases', JSON.stringify(clasesSeleccionadas));
     if (selectedFile) {
       formData.append('archivo', selectedFile);
     }
 
     try {
       const response = await axios.post<ApiResponse>(
-        'http://localhost:3008/api/unicah/excusa/insertExcusa',  // Ruta corregida
+        'http://localhost:3008/api/unicah/excusa/insertExcusa',
         formData
       );
 
@@ -63,6 +81,7 @@ function ExcusaAlumnoScreen() {
       setSelectedReason(null);
       setDescription('');
       setSelectedFile(null);
+      setClasesSeleccionadas([]);
     } catch (error) {
       console.error('Error al enviar la excusa:', error);
       alert('Ocurrió un error al enviar la excusa.');
@@ -88,7 +107,7 @@ function ExcusaAlumnoScreen() {
               key={razon}
               value={razon}
               label={razon}
-              imageUrl={`https://i.postimg.cc/.../${razon}.png`} // Puedes poner URLs según cada razón
+              imageUrl={`https://i.postimg.cc/.../${razon}.png`} // Ajusta esta URL si usas imágenes reales
               name="reason"
               onChange={handleReasonChange}
               checked={selectedReason === razon}
@@ -106,6 +125,25 @@ function ExcusaAlumnoScreen() {
             value={description} 
             onChange={(e) => setDescription(e.target.value)}
           ></textarea>
+        </div>
+
+        <div className="mt-3 text-start">
+          <label className="form-label">Selecciona las clases afectadas:</label>
+          {clases.map(clase => (
+            <div key={clase.id} className="form-check">
+              <input 
+                className="form-check-input" 
+                type="checkbox" 
+                value={clase.id}
+                checked={clasesSeleccionadas.includes(clase.id)}
+                onChange={() => handleCheckboxChange(clase.id)}
+                id={`clase-${clase.id}`}
+              />
+              <label className="form-check-label" htmlFor={`clase-${clase.id}`}>
+                {clase.nombre}
+              </label>
+            </div>
+          ))}
         </div>
 
         <div className="mt-3 text-start">

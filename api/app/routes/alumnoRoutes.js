@@ -9,7 +9,7 @@ const auth = require('../middlewares/auth')
 
 // Ruta para obtener los datos de un alumno
 // La ruta es protegida por el middleware de autenticación
-apiRoutes.get('/getAlumno', /*auth.isAuth,*/ async(req, res) => await alumnoController.getAlumno(req, res));
+apiRoutes.get('/getAlumno', auth.isAuth, async(req, res) => await alumnoController.getAlumno(req, res));
 
 // Ruta para insertar un nuevo alumno
 // También está protegida por el middleware de autenticación
