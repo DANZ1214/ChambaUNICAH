@@ -15,24 +15,13 @@ const auth = require('../middlewares/auth')
  * @module apiRoutes
  */
 
-/**
- * Ruta para obtener todos los usuarios.
- */
+
 apiRoutes.get('/getUser', async (req, res) => await userController.getUser(req, res));
 
-/**
- * Ruta para insertar un nuevo usuario.
- */
 apiRoutes.post('/insertUser', async (req, res) => await userController.insertUser(req, res));
 
-/**
- * Ruta para actualizar un usuario existente.
- */
 apiRoutes.put('/updateUser', async (req, res) => await userController.updateUser(req, res));
 
-/**
- * Ruta para eliminar un usuario existente.
- */
 apiRoutes.delete('/deleteUser', async (req, res) => await userController.deleteUser(req, res));
 
 apiRoutes.post('/login', async (req, res) => await userController.login(req, res));
