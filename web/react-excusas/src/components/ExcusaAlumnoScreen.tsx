@@ -18,32 +18,32 @@ function ExcusaAlumnoScreen() {
   const [description, setDescription] = useState<string>('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [alumnoId, setAlumnoId] = useState<number | null>(null);
-  const [clases, setClases] = useState<Clase[]>([]);
   const [clasesSeleccionadas, setClasesSeleccionadas] = useState<number[]>([]);
-  const navigate = useNavigate();
   const [clasesMatriculadas, setClasesMatriculadas] = useState<Clase[]>([]);
+  const navigate = useNavigate();
+
+  // Diccionario con imágenes por razón
+  const imagenesRazon: Record<string, string> = {
+    Enfermedad: "https://i.postimg.cc/3J052qVw/image-removebg-preview-55.png",
+    Luto: "https://i.postimg.cc/T1ZskRF3/image-removebg-preview-67.png",
+    Viaje: "https://i.postimg.cc/vB2kV7v9/image-removebg-preview-66.png",
+    Otro: "https://i.postimg.cc/5tnkh5TG/image-removebg-preview-68.png",
+  };
 
   useEffect(() => {
     const storedAlumnoId = sessionStorage.getItem('alumnoId');
     if (storedAlumnoId) {
-        const alumnoIdNumber = Number(storedAlumnoId);
-        setAlumnoId(alumnoIdNumber);
-        console.log("Alumno ID obtenido del sessionStorage:", alumnoIdNumber); // Agrega esta línea
+      const alumnoIdNumber = Number(storedAlumnoId);
+      setAlumnoId(alumnoIdNumber);
 
-        axios.get<Clase[]>(`http://localhost:3008/api/unicah/matriculaAlumno/getClasesAlumno/${alumnoIdNumber}`)
-            .then(res => {
-                setClasesMatriculadas(res.data);
-                console.log("Clases matriculadas obtenidas:", res.data); // Agrega esta línea
-            })
-            .catch(err => console.error('Error cargando clases matriculadas:', err));
+      axios
+        .get<Clase[]>(`http://localhost:3008/api/unicah/matriculaAlumno/getClasesAlumno/${alumnoIdNumber}`)
+        .then(res => setClasesMatriculadas(res.data))
+        .catch(err => console.error('Error cargando clases matriculadas:', err));
     } else {
-        navigate('/');
+      navigate('/');
     }
-
-    axios.get<Clase[]>('http://localhost:3008/api/unicah/matriculaAlumno/getClasesAlumno/:alumnoId')
-      .then(res => setClases(res.data))
-      .catch(err => console.error('Error cargando clases:', err));
-}, [navigate]);
+  }, [navigate]);
 
   const handleReasonChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSelectedReason(event.target.value);
@@ -62,67 +62,63 @@ function ExcusaAlumnoScreen() {
   };
 
   const handleSubmit = async () => {
-    console.log("Función handleSubmit llamada");
-
     if (!selectedReason || !description || clasesSeleccionadas.length === 0) {
-        alert('Por favor, completa todos los campos y selecciona al menos una clase.');
-        return;
+      alert('Por favor, completa todos los campos y selecciona al menos una clase.');
+      return;
     }
 
     if (!alumnoId) {
-        alert('No se ha identificado al alumno. Vuelve a iniciar sesión.');
-        return;
+      alert('No se ha identificado al alumno. Vuelve a iniciar sesión.');
+      return;
     }
-
-    console.log("Clases seleccionadas:", clasesSeleccionadas);
 
     const formData = new FormData();
     formData.append('alumnoId', alumnoId.toString());
     formData.append('razon', selectedReason);
     formData.append('descripcion', description);
     const clasesSinEspacios = clasesSeleccionadas.map(claseId => String(claseId).trim());
-    formData.append('clases', JSON.stringify(clasesSinEspacios)); // Enviar los IDs de las clases como un array JSON
+    formData.append('clases', JSON.stringify(clasesSinEspacios));
     if (selectedFile) {
-        formData.append('archivo', selectedFile);
+      formData.append('archivo', selectedFile);
     }
 
     try {
-        const response = await axios.post<ApiResponse>(
-            'http://localhost:3008/api/unicah/excusa/insertExcusa',
-            formData
-        );
+      const response = await axios.post<ApiResponse>(
+        'http://localhost:3008/api/unicah/excusa/insertExcusa',
+        formData
+      );
 
-        alert(response.data.message);
-        setSelectedReason(null);
-        setDescription('');
-        setSelectedFile(null);
-        setClasesSeleccionadas([]);
+      alert(response.data.message);
+      setSelectedReason(null);
+      setDescription('');
+      setSelectedFile(null);
+      setClasesSeleccionadas([]);
     } catch (error) {
-        console.error('Error al enviar la excusa:', error);
-        alert('Ocurrió un error al enviar la excusa.');
+      console.error('Error al enviar la excusa:', error);
+      alert('Ocurrió un error al enviar la excusa.');
     }
-};
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
       <div className="container-fluid shadow p-4 bg-white rounded text-center">
         <h2 className="text-primary">SISTEMA DE EXCUSAS UNICAH</h2>
-        <img 
-          src="https://i.postimg.cc/NfcLn1tB/image-removebg-preview-65.png" 
-          alt="Escudo UNICAH" 
-          className="img-fluid mb-3" 
-          width="120" 
+        <img
+          src="https://i.postimg.cc/NfcLn1tB/image-removebg-preview-65.png"
+          alt="Escudo UNICAH"
+          className="img-fluid mb-3"
+          width="120"
         />
         <h3>BIENVENIDO</h3>
         <div className="alert alert-primary mt-3">SELECCIONA UNA RAZÓN</div>
 
         <div className="d-flex flex-wrap justify-content-around">
           {['Enfermedad', 'Luto', 'Viaje', 'Otro'].map((razon) => (
-            <ReasonOption 
+            <ReasonOption
               key={razon}
               value={razon}
               label={razon}
-              imageUrl={`https://i.postimg.cc/.../${razon}.png`} // Ajusta esta URL si usas imágenes reales
+              imageUrl={imagenesRazon[razon]}
               name="reason"
               onChange={handleReasonChange}
               checked={selectedReason === razon}
@@ -132,45 +128,45 @@ function ExcusaAlumnoScreen() {
 
         <div className="mt-3 text-start">
           <label htmlFor="description" className="form-label">Describe la inasistencia:</label>
-          <textarea 
-            id="description" 
-            className="form-control" 
-            rows={3} 
-            required 
-            value={description} 
+          <textarea
+            id="description"
+            className="form-control"
+            rows={3}
+            required
+            value={description}
             onChange={(e) => setDescription(e.target.value)}
           ></textarea>
         </div>
 
         <div className="mt-3 text-start">
-    <label className="form-label">Selecciona las clases a las que aplica la excusa:</label>
-    {clasesMatriculadas.map(clase => (
-        <div key={clase.id_clase} className="form-check">
-            <input
+          <label className="form-label">Selecciona las clases a las que aplica la excusa:</label>
+          {clasesMatriculadas.map(clase => (
+            <div key={clase.id_clase} className="form-check">
+              <input
                 className="form-check-input"
                 type="checkbox"
                 value={clase.id_clase}
                 checked={clasesSeleccionadas.includes(clase.id_clase)}
                 onChange={() => handleCheckboxChange(clase.id_clase)}
                 id={`clase-${clase.id_clase}`}
-            />
-            <label className="form-check-label" htmlFor={`clase-${clase.id_clase}`}>
+              />
+              <label className="form-check-label" htmlFor={`clase-${clase.id_clase}`}>
                 {clase.nombre_clase} ({clase.id_clase})
-            </label>
+              </label>
+            </div>
+          ))}
+          {clasesMatriculadas.length === 0 && (
+            <p className="text-muted">No estás matriculado en ninguna clase activa.</p>
+          )}
         </div>
-    ))}
-    {clasesMatriculadas.length === 0 && (
-        <p className="text-muted">No estás matriculado en ninguna clase activa.</p>
-    )}
-</div>
 
         <div className="mt-3 text-start">
           <label htmlFor="file-upload" className="form-label">Adjuntar documento de respaldo:</label>
-          <input 
-            type="file" 
-            id="file-upload" 
-            className="form-control" 
-            onChange={handleFileChange} 
+          <input
+            type="file"
+            id="file-upload"
+            className="form-control"
+            onChange={handleFileChange}
             accept=".pdf,.png,.jpg,.jpeg"
           />
           {selectedFile && (
