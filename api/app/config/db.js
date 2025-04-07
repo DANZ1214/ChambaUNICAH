@@ -58,9 +58,14 @@ db.excusa = require('../models/excusasModels')(sequelizeInstance, Sequelize);
 
 db.matricula = require('../models/matriculaModels')(sequelizeInstance, Sequelize);
 
+db.excusaClase = require('../models/excusaClaseModels')(sequelizeInstance, Sequelize); // Nueva importación
 
+// Definir las asociaciones
+db.excusa.belongsToMany(db.clase, { through: db.excusaClase, foreignKey: 'id_excusa' });
+db.clase.belongsToMany(db.excusa, { through: db.excusaClase, foreignKey: 'id_clase' });
 
-
+// Nueva asociación:
+db.matricula.belongsTo(db.clase, { foreignKey: 'id_clase', as: 'clase' });
 
 // Exporta el objeto db para que pueda ser utilizado en otros módulos.
 module.exports = db;

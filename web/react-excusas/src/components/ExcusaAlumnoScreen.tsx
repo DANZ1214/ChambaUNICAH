@@ -9,8 +9,8 @@ interface ApiResponse {
 }
 
 interface Clase {
-  id: number;
-  nombre: string;
+  id_clase: number;
+  nombre_clase: string;
 }
 
 function ExcusaAlumnoScreen() {
@@ -21,19 +21,29 @@ function ExcusaAlumnoScreen() {
   const [clases, setClases] = useState<Clase[]>([]);
   const [clasesSeleccionadas, setClasesSeleccionadas] = useState<number[]>([]);
   const navigate = useNavigate();
+  const [clasesMatriculadas, setClasesMatriculadas] = useState<Clase[]>([]);
 
   useEffect(() => {
     const storedAlumnoId = sessionStorage.getItem('alumnoId');
     if (storedAlumnoId) {
-      setAlumnoId(Number(storedAlumnoId));
+        const alumnoIdNumber = Number(storedAlumnoId);
+        setAlumnoId(alumnoIdNumber);
+        console.log("Alumno ID obtenido del sessionStorage:", alumnoIdNumber); // Agrega esta línea
+
+        axios.get<Clase[]>(`http://localhost:3008/api/unicah/matriculaAlumno/getClasesAlumno/${alumnoIdNumber}`)
+            .then(res => {
+                setClasesMatriculadas(res.data);
+                console.log("Clases matriculadas obtenidas:", res.data); // Agrega esta línea
+            })
+            .catch(err => console.error('Error cargando clases matriculadas:', err));
     } else {
-      navigate('/');
+        navigate('/');
     }
-  
-    axios.get<Clase[]>('http://localhost:3008/api/unicah/clases')
+
+    axios.get<Clase[]>('http://localhost:3008/api/unicah/matriculaAlumno/getClasesAlumno/:alumnoId')
       .then(res => setClases(res.data))
       .catch(err => console.error('Error cargando clases:', err));
-  }, [navigate]);
+}, [navigate]);
 
   const handleReasonChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSelectedReason(event.target.value);
@@ -53,40 +63,40 @@ function ExcusaAlumnoScreen() {
 
   const handleSubmit = async () => {
     if (!selectedReason || !description || clasesSeleccionadas.length === 0) {
-      alert('Por favor, completa todos los campos y selecciona al menos una clase.');
-      return;
+        alert('Por favor, completa todos los campos y selecciona al menos una clase.');
+        return;
     }
 
     if (!alumnoId) {
-      alert('No se ha identificado al alumno. Vuelve a iniciar sesión.');
-      return;
+        alert('No se ha identificado al alumno. Vuelve a iniciar sesión.');
+        return;
     }
 
     const formData = new FormData();
     formData.append('alumnoId', alumnoId.toString());
     formData.append('razon', selectedReason);
     formData.append('descripcion', description);
-    formData.append('clases', JSON.stringify(clasesSeleccionadas));
+    formData.append('clases', JSON.stringify(clasesSeleccionadas)); // Enviar los IDs de las clases como un array JSON
     if (selectedFile) {
-      formData.append('archivo', selectedFile);
+        formData.append('archivo', selectedFile);
     }
 
     try {
-      const response = await axios.post<ApiResponse>(
-        'http://localhost:3008/api/unicah/excusa/insertExcusa',
-        formData
-      );
+        const response = await axios.post<ApiResponse>(
+            'http://localhost:3008/api/unicah/excusa/insertExcusa',
+            formData
+        );
 
-      alert(response.data.message);
-      setSelectedReason(null);
-      setDescription('');
-      setSelectedFile(null);
-      setClasesSeleccionadas([]);
+        alert(response.data.message);
+        setSelectedReason(null);
+        setDescription('');
+        setSelectedFile(null);
+        setClasesSeleccionadas([]);
     } catch (error) {
-      console.error('Error al enviar la excusa:', error);
-      alert('Ocurrió un error al enviar la excusa.');
+        console.error('Error al enviar la excusa:', error);
+        alert('Ocurrió un error al enviar la excusa.');
     }
-  };
+};
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
@@ -128,23 +138,26 @@ function ExcusaAlumnoScreen() {
         </div>
 
         <div className="mt-3 text-start">
-          <label className="form-label">Selecciona las clases afectadas:</label>
-          {clases.map(clase => (
-            <div key={clase.id} className="form-check">
-              <input 
-                className="form-check-input" 
-                type="checkbox" 
-                value={clase.id}
-                checked={clasesSeleccionadas.includes(clase.id)}
-                onChange={() => handleCheckboxChange(clase.id)}
-                id={`clase-${clase.id}`}
-              />
-              <label className="form-check-label" htmlFor={`clase-${clase.id}`}>
-                {clase.nombre}
-              </label>
-            </div>
-          ))}
+    <label className="form-label">Selecciona las clases a las que aplica la excusa:</label>
+    {clasesMatriculadas.map(clase => (
+        <div key={clase.id_clase} className="form-check">
+            <input
+                className="form-check-input"
+                type="checkbox"
+                value={clase.id_clase}
+                checked={clasesSeleccionadas.includes(clase.id_clase)}
+                onChange={() => handleCheckboxChange(clase.id_clase)}
+                id={`clase-${clase.id_clase}`}
+            />
+            <label className="form-check-label" htmlFor={`clase-${clase.id_clase}`}>
+                {clase.nombre_clase} ({clase.id_clase})
+            </label>
         </div>
+    ))}
+    {clasesMatriculadas.length === 0 && (
+        <p className="text-muted">No estás matriculado en ninguna clase activa.</p>
+    )}
+</div>
 
         <div className="mt-3 text-start">
           <label htmlFor="file-upload" className="form-label">Adjuntar documento de respaldo:</label>

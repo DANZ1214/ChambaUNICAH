@@ -2,6 +2,7 @@
 
 const db = require('../config/db');
 const excusa = db.excusa;
+const excusaClase = db.excusaClase;
 
 async function getExcusa(req, res) {
     excusa.findAll()
@@ -29,6 +30,16 @@ async function insertExcusa(req, res) {
 
     try {
         const result = await excusa.create({ alumnoId, razon, archivo, descripcion });
+
+        // Guardar las clases asociadas a la excusa
+        if (clases && Array.isArray(clases) && clases.length > 0) {
+            const clasesAGuardar = clases.map(claseId => ({
+                id_excusa: result.id_excusa,
+                id_clase: claseId
+            }));
+            await excusaClase.bulkCreate(clasesAGuardar);
+        }
+
         res.status(201).send({ message: "Excusa creada exitosamente", result });
     } catch (error) {
         console.error("Error al insertar excusa:", error);

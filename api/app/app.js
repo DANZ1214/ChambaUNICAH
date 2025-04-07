@@ -14,6 +14,7 @@ const docenteRoutes = require('./routes/docenteRoutes');
 const userRoutes = require('./routes/userRoutes');
 const excusasRoutes = require('./routes/excusasRoutes');
 const matriculaRoutes = require('./routes/matriculaRoutes');
+const matriculaAlumnoRoutes = require('./routes/matriculaAlumnoRoutes');
 
 
 /**
@@ -38,6 +39,7 @@ App.use('/api/unicah/docente', docenteRoutes);
 App.use('/api/unicah/user', userRoutes);
 App.use('/api/unicah/excusa', excusasRoutes);
 App.use('/api/unicah/matricula', matriculaRoutes);
+App.use('/api/unicah/matriculaAlumno', matriculaAlumnoRoutes);
 
 // Inicia el servidor en el puerto 3008
 
