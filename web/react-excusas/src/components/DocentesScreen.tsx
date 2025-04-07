@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import './DocenteScreen.css';
+import './DocentesScreen.css';
 
 // Definir la interfaz de la Excusa
 interface Excusa {
