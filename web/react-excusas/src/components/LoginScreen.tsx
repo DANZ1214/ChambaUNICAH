@@ -27,6 +27,7 @@ const LoginScreen = () => {
 
         // Guardar info relevante en sessionStorage
         sessionStorage.setItem('alumnoId', data.alumnoId || '');
+        sessionStorage.setItem('docenteId', data.docenteId || '');
         sessionStorage.setItem('userId', data.user.userId);
         sessionStorage.setItem('roleId', data.user.roleId);
 
