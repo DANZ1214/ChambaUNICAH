@@ -15,7 +15,7 @@ async function getExcusa(req, res) {
 }
 
 async function insertExcusa(req, res) {
-    const { razon, descripcion, alumnoId } = req.body;
+    const { razon, descripcion, alumnoId, clases } = req.body;
     const archivo = req.file ? req.file.filename : null;
 
     if (!alumnoId) {

@@ -62,6 +62,8 @@ function ExcusaAlumnoScreen() {
   };
 
   const handleSubmit = async () => {
+    console.log("Función handleSubmit llamada");
+
     if (!selectedReason || !description || clasesSeleccionadas.length === 0) {
         alert('Por favor, completa todos los campos y selecciona al menos una clase.');
         return;
@@ -72,11 +74,14 @@ function ExcusaAlumnoScreen() {
         return;
     }
 
+    console.log("Clases seleccionadas:", clasesSeleccionadas);
+
     const formData = new FormData();
     formData.append('alumnoId', alumnoId.toString());
     formData.append('razon', selectedReason);
     formData.append('descripcion', description);
-    formData.append('clases', JSON.stringify(clasesSeleccionadas)); // Enviar los IDs de las clases como un array JSON
+    const clasesSinEspacios = clasesSeleccionadas.map(claseId => String(claseId).trim());
+    formData.append('clases', JSON.stringify(clasesSinEspacios)); // Enviar los IDs de las clases como un array JSON
     if (selectedFile) {
         formData.append('archivo', selectedFile);
     }
