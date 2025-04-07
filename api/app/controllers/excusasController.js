@@ -15,8 +15,9 @@ async function getExcusa(req, res) {
 }
 
 async function insertExcusa(req, res) {
-    const { razon, descripcion, alumnoId, clases } = req.body;
+    const { razon, descripcion, alumnoId } = req.body;
     const archivo = req.file ? req.file.filename : null;
+    let { clases } = req.body; // Declaramos 'clases' con 'let' para poder reasignarla
 
     if (!alumnoId) {
         return res.status(400).send({ message: "El ID del alumno es obligatorio" });
@@ -32,12 +33,30 @@ async function insertExcusa(req, res) {
         const result = await excusa.create({ alumnoId, razon, archivo, descripcion });
 
         // Guardar las clases asociadas a la excusa
-        if (clases && Array.isArray(clases) && clases.length > 0) {
-            const clasesAGuardar = clases.map(claseId => ({
-                id_excusa: result.id_excusa,
-                id_clase: claseId
-            }));
-            await excusaClase.bulkCreate(clasesAGuardar);
+        if (clases) {
+            try {
+                clases = JSON.parse(clases); // Intentamos parsear la cadena JSON a un array
+                if (Array.isArray(clases) && clases.length > 0) {
+                    console.log("Clases recibidas y parseadas:", clases); // Log actualizado
+
+                    const clasesAGuardar = clases.map(claseId => ({
+                        id_excusa: result.id_excusa,
+                        id_clase: claseId
+                    }));
+
+                    console.log("Clases a guardar en excusaClase:", clasesAGuardar);
+
+                    await excusaClase.bulkCreate(clasesAGuardar);
+                    console.log("Inserción en excusaClase completada");
+                } else {
+                    console.log("El array de clases parseado está vacío o no es un array.");
+                }
+            } catch (error) {
+                console.error("Error al parsear el JSON de clases:", error);
+                console.log("Valor de 'clases' recibido:", clases);
+            }
+        } else {
+            console.log("No se recibieron clases para asociar.");
         }
 
         res.status(201).send({ message: "Excusa creada exitosamente", result });
