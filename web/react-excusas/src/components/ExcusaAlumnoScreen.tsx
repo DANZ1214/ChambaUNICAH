@@ -3,6 +3,7 @@ import './ExcusaAlumnoScreen.css';
 import ReasonOption from './ReasonOption';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Modal, Button } from 'react-bootstrap';
 
 interface ApiResponse {
   message: string;
@@ -21,6 +22,8 @@ function ExcusaAlumnoScreen() {
   const [clasesSeleccionadas, setClasesSeleccionadas] = useState<number[]>([]);
   const [clasesMatriculadas, setClasesMatriculadas] = useState<Clase[]>([]);
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
 
   // Diccionario con imágenes por razón
   const imagenesRazon: Record<string, string> = {
@@ -84,99 +87,118 @@ function ExcusaAlumnoScreen() {
 
     try {
       const response = await axios.post<ApiResponse>(
-        'http://localhost:3008/api/unicah/excusa/insertExcusa',
-        formData
+          'http://localhost:3008/api/unicah/excusa/insertExcusa',
+          formData
       );
 
-      alert(response.data.message);
+      setModalMessage(response.data.message); // Guarda el mensaje en el estado
+      setShowModal(true); // Muestra el modal
       setSelectedReason(null);
       setDescription('');
       setSelectedFile(null);
       setClasesSeleccionadas([]);
-    } catch (error) {
+      } catch (error) {
       console.error('Error al enviar la excusa:', error);
       alert('Ocurrió un error al enviar la excusa.');
-    }
+  }
   };
 
+  const handleCloseModal = () => setShowModal(false);
+
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
-      <div className="container-fluid shadow p-4 bg-white rounded text-center">
-        <h2 className="text-primary">SISTEMA DE EXCUSAS UNICAH</h2>
-        <img
-          src="https://i.postimg.cc/NfcLn1tB/image-removebg-preview-65.png"
-          alt="Escudo UNICAH"
-          className="img-fluid mb-3"
-          width="120"
-        />
-        <h3>BIENVENIDO</h3>
-        <div className="alert alert-primary mt-3">SELECCIONA UNA RAZÓN</div>
+    <> {/* Fragment vacío para envolver todo */}
+        <div className="d-flex justify-content-center align-items-center vh-100">
+            <div className="container-fluid shadow p-4 bg-white rounded text-center">
+                <h2 className="text-primary">SISTEMA DE EXCUSAS UNICAH</h2>
+                <img
+                    src="https://i.postimg.cc/NfcLn1tB/image-removebg-preview-65.png"
+                    alt="Escudo UNICAH"
+                    className="img-fluid mb-3"
+                    width="120"
+                />
+                <h3>BIENVENIDO</h3>
+                <div className="alert alert-primary mt-3">SELECCIONA UNA RAZÓN</div>
 
-        <div className="d-flex flex-wrap justify-content-around">
-          {['Enfermedad', 'Luto', 'Viaje', 'Otro'].map((razon) => (
-            <ReasonOption
-              key={razon}
-              value={razon}
-              label={razon}
-              imageUrl={imagenesRazon[razon]}
-              name="reason"
-              onChange={handleReasonChange}
-              checked={selectedReason === razon}
-            />
-          ))}
-        </div>
+                <div className="d-flex flex-wrap justify-content-around">
+                    {['Enfermedad', 'Luto', 'Viaje', 'Otro'].map((razon) => (
+                        <ReasonOption
+                            key={razon}
+                            value={razon}
+                            label={razon}
+                            imageUrl={`https://i.postimg.cc/.../${razon}.png`} // Ajusta esta URL si usas imágenes reales
+                            name="reason"
+                            onChange={handleReasonChange}
+                            checked={selectedReason === razon}
+                        />
+                    ))}
+                </div>
 
-        <div className="mt-3 text-start">
-          <label htmlFor="description" className="form-label">Describe la inasistencia:</label>
-          <textarea
-            id="description"
-            className="form-control"
-            rows={3}
-            required
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          ></textarea>
-        </div>
+                <div className="mt-3 text-start">
+                    <label htmlFor="description" className="form-label">Describe la inasistencia:</label>
+                    <textarea
+                        id="description"
+                        className="form-control"
+                        rows={3}
+                        required
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                    ></textarea>
+                </div>
 
-        <div className="mt-3 text-start">
-          <label className="form-label">Selecciona las clases a las que aplica la excusa:</label>
-          {clasesMatriculadas.map(clase => (
-            <div key={clase.id_clase} className="form-check">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                value={clase.id_clase}
-                checked={clasesSeleccionadas.includes(clase.id_clase)}
-                onChange={() => handleCheckboxChange(clase.id_clase)}
-                id={`clase-${clase.id_clase}`}
-              />
-              <label className="form-check-label" htmlFor={`clase-${clase.id_clase}`}>
-                {clase.nombre_clase} ({clase.id_clase})
-              </label>
+                <div className="mt-3 text-start">
+                    <label className="form-label">Selecciona las clases a las que aplica la excusa:</label>
+                    {clasesMatriculadas.map(clase => (
+                        <div key={clase.id_clase} className="form-check">
+                            <input
+                                className="form-check-input"
+                                type="checkbox"
+                                value={clase.id_clase}
+                                checked={clasesSeleccionadas.includes(clase.id_clase)}
+                                onChange={() => handleCheckboxChange(clase.id_clase)}
+                                id={`clase-${clase.id_clase}`}
+                            />
+                            <label className="form-check-label" htmlFor={`clase-${clase.id_clase}`}>
+                                {clase.nombre_clase} ({clase.id_clase})
+                            </label>
+                        </div>
+                    ))}
+                    {clasesMatriculadas.length === 0 && (
+                        <p className="text-muted">No estás matriculado en ninguna clase activa.</p>
+                    )}
+                </div>
+
+                <div className="mt-3 text-start">
+                    <label htmlFor="file-upload" className="form-label">Adjuntar documento de respaldo:</label>
+                    <input
+                        type="file"
+                        id="file-upload"
+                        className="form-control"
+                        onChange={handleFileChange}
+                        accept=".pdf,.png,.jpg,.jpeg"
+                    />
+                    {selectedFile && (
+                        <p className="mt-2 text-success">Archivo seleccionado: {selectedFile.name}</p>
+                    )}
+                </div>
+
+                <button className="btn btn-primary mt-3" onClick={handleSubmit}>ENVIAR</button>
             </div>
-          ))}
-          {clasesMatriculadas.length === 0 && (
-            <p className="text-muted">No estás matriculado en ninguna clase activa.</p>
-          )}
         </div>
 
-        <div className="mt-3 text-start">
-          <label htmlFor="file-upload" className="form-label">Adjuntar documento de respaldo:</label>
-          <input
-            type="file"
-            id="file-upload"
-            className="form-control"
-            onChange={handleFileChange}
-            accept=".pdf,.png,.jpg,.jpeg"
-          />
-          {selectedFile && (
-            <p className="mt-2 text-success">Archivo seleccionado: {selectedFile.name}</p>
-          )}
-        </div>
-
-        <button className="btn btn-primary mt-3" onClick={handleSubmit}>ENVIAR</button>
-      </div>
-    </div>
+        <Modal show={showModal} onHide={handleCloseModal} centered>
+            <Modal.Header closeButton>
+                <Modal.Title>¡Éxito!</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>{modalMessage}</p>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="primary" onClick={handleCloseModal}>
+                    Aceptar
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    </>
   );
 }
 
