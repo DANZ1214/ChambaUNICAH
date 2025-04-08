@@ -4,6 +4,8 @@ const { result } = require('lodash');
 // Importa la configuración de la base de datos y el modelo de usuario.
 const db = require('../config/db');
 const user = db.user;
+const alumno = db.alumno;
+const docente = db.docente;
 
 
 /**
@@ -126,21 +128,23 @@ async function login(req, res) {
             return res.status(401).json({ message: "Credenciales incorrectas" });
         }
 
-        // Buscar el alumno correspondiente (si existe)
-        const alumno = await db.alumno.findOne({ where: { alumnoId: userId } });
+        // Buscar en la tabla alumno y docente
+        const alumnoFound = await alumno.findOne({ where: { alumnoId: userId } });
+        const docenteFound = await docente.findOne({ where: { docenteId: userId } });
 
-        const responseData = {
+        return res.status(200).json({
             message: "Inicio de sesión exitoso",
             user: userFound,
-            alumnoId: alumno?.alumnoId || null // si no es alumno, se manda null
-        };
-        return res.status(200).json(responseData);
+            alumnoId: alumnoFound ? alumnoFound.alumnoId : null,
+            docenteId: docenteFound ? docenteFound.docenteId : null
+        });
 
     } catch (error) {
         console.error("Error en login:", error);
         return res.status(500).json({ message: error.message || "Error en el servidor" });
     }
 }
+
 
 // Exporta las funciones para que puedan ser utilizadas en otras partes de la aplicación.
 module.exports = {

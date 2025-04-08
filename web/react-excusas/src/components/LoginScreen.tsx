@@ -9,7 +9,7 @@ const LoginScreen = () => {
   const [errorMensaje, setErrorMensaje] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: { preventDefault: () => void }) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setErrorMensaje('');
 
@@ -25,19 +25,17 @@ const LoginScreen = () => {
       if (response.ok) {
         console.log('Inicio de sesión exitoso:', data);
 
-        // Guardar info relevante en sessionStorage
-        sessionStorage.setItem('alumnoId', data.alumnoId || '');
-        sessionStorage.setItem('docenteId', data.docenteId || '');
         sessionStorage.setItem('userId', data.user.userId);
         sessionStorage.setItem('roleId', data.user.roleId);
 
-        // Redirigir según rol
-        if (data.user.roleId === 2) {
-          navigate('/docente');
-        } else if (data.user.roleId === 3) {
+        if (data.alumnoId) {
+          sessionStorage.setItem('alumnoId', data.alumnoId);
           navigate('/excusa-alumno');
+        } else if (data.docenteId) {
+          sessionStorage.setItem('docenteId', data.docenteId);
+          navigate('/docente');
         } else {
-          setErrorMensaje('Rol no autorizado para acceder.');
+          setErrorMensaje('No se identificó si es alumno o docente');
         }
       } else {
         setErrorMensaje(data.message || 'Usuario o contraseña incorrectos');
