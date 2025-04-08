@@ -29,6 +29,27 @@ async function getClasesAlumno(req, res) {
     }
 }
 
+async function getClasesDocente(req, res) {
+    const { docenteId } = req.params;
+    if (!docenteId || isNaN(docenteId)) {
+      return res.status(400).send({ message: "ID de docente inválido" });
+    }
+    try {
+      const matriculasDocente = await matricula.findAll({
+        where: { docenteId }, // Usar solo docenteId (número)
+        include: [{
+          model: clase,
+          as: 'clase',
+          attributes: ['id_clase', 'nombre_clase']
+        }]
+      });
+      res.status(200).json(matriculasDocente.map(m => m.clase));
+    } catch (error) {
+      res.status(500).send({ message: error.message });
+    }
+  }
+
 module.exports = {
-    getClasesAlumno
+    getClasesAlumno,
+    getClasesDocente
 };

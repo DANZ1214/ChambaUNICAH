@@ -41,6 +41,7 @@ App.use('/api/unicah/excusa', excusasRoutes);
 App.use('/api/unicah/matricula', matriculaRoutes);
 App.use('/api/unicah/matriculaAlumno', matriculaAlumnoRoutes);
 
+
 // Inicia el servidor en el puerto 3008
 
 const PORT = 3008;

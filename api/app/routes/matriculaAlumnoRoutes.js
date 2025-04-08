@@ -6,5 +6,6 @@ const auth = require('../middlewares/auth'); // Si quieres proteger esta ruta, d
 const apiRoutes = express.Router();
 
 apiRoutes.get('/getClasesAlumno/:alumnoId', /*auth.isAuth,*/ async (req, res) => await matriculaAlumnoController.getClasesAlumno(req, res));
+apiRoutes.get( '/getClasesDocente/:docenteId', /*auth.isAuth,*/ async (req, res) =>	await matriculaAlumnoController.getClasesDocente(req, res));
 
 module.exports = apiRoutes;
