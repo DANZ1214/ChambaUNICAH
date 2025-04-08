@@ -128,8 +128,11 @@ async function login(req, res) {
             return res.status(401).json({ message: "Credenciales incorrectas" });
         }
 
-        // Buscar en la tabla alumno y docente
+        // Buscar si es alumno
         const alumnoFound = await alumno.findOne({ where: { alumnoId: userId } });
+
+        // Buscar si es docente
+        const docente = db.docente; // Asegúrate de tener el modelo importado
         const docenteFound = await docente.findOne({ where: { docenteId: userId } });
 
         return res.status(200).json({
@@ -144,6 +147,7 @@ async function login(req, res) {
         return res.status(500).json({ message: error.message || "Error en el servidor" });
     }
 }
+
 
 
 // Exporta las funciones para que puedan ser utilizadas en otras partes de la aplicación.

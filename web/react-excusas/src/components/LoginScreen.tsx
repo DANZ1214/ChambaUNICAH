@@ -12,22 +12,22 @@ const LoginScreen = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setErrorMensaje('');
-
+  
     try {
       const response = await fetch('http://localhost:3008/api/unicah/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: usuario, pass: contrasena }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         console.log('Inicio de sesión exitoso:', data);
-
+  
+        // Guardar info relevante en sessionStorage
         sessionStorage.setItem('userId', data.user.userId);
         sessionStorage.setItem('roleId', data.user.roleId);
-
         if (data.alumnoId) {
           sessionStorage.setItem('alumnoId', data.alumnoId);
           navigate('/excusa-alumno');
@@ -45,7 +45,7 @@ const LoginScreen = () => {
       setErrorMensaje('Error de conexión con el servidor');
     }
   };
-
+  
   return (
     <div className="container-fluid vh-100 w-100 d-flex flex-column justify-content-center align-items-center bg-white">
       <div className="text-center mb-4">
@@ -94,3 +94,4 @@ const LoginScreen = () => {
 };
 
 export default LoginScreen;
+ 

@@ -7,31 +7,31 @@ module.exports = (sequelize) => {
         id_excusa: {
             type: DataTypes.INTEGER,
             primaryKey: true,
-            autoIncrement: true, // Añadido para que sea autoincremental
+            autoIncrement: true,
         },
         alumnoId: {
             type: DataTypes.INTEGER,
-            allowNull: false, // El ID del alumno es obligatorio
+            allowNull: false,
         },
         razon: {
-            type: DataTypes.ENUM('Enfermedad', 'Luto', 'Viaje', 'Otro'), // Corregido a ENUM
-            allowNull: false, // La razón es obligatoria
+            type: DataTypes.ENUM('Enfermedad', 'Luto', 'Viaje', 'Otro'),
+            allowNull: false,
         },
         archivo: {
             type: DataTypes.STRING(255),
-            allowNull: true
+            allowNull: true,
         },
         fecha_solicitud: {
-            type: DataTypes.DATE, // Cambiado a DATE para mayor claridad (TIMESTAMP también funcionaría)
-            defaultValue: DataTypes.NOW, // Establece el valor por defecto a la fecha y hora actual
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW,
         },
         estado: {
             type: DataTypes.STRING(45),
-            defaultValue: 'Pendiente', // Establece el estado por defecto como 'Pendiente'
+            defaultValue: 'Pendiente',
         },
-        descripcion: { // Nuevo campo para la descripción
+        descripcion: {
             type: DataTypes.STRING(255),
-            allowNull: false, // La descripción es obligatoria
+            allowNull: false,
         }
     };
 
@@ -39,9 +39,8 @@ module.exports = (sequelize) => {
         defaultScope: {
             attributes: { exclude: ['createdAt', 'updatedAt'] },
         },
-        scopes: {},
-        tableName: 'excusas', // Corregido el nombre de la tabla a 'excusas' (plural)
-        timestamps: true, // Reactivamos los timestamps automáticos (createdAt y updatedAt)
+        tableName: 'excusas',
+        timestamps: true,
     };
 
     return sequelize.define('excusa', attributes, options);

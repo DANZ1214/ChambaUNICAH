@@ -3,6 +3,9 @@
 const db = require('../config/db');
 const excusa = db.excusa;
 const excusaClase = db.excusaClase;
+const clase = db.clase;
+const alumno = db.alumno;
+const matricula = db.matricula;
 
 async function getExcusa(req, res) {
     excusa.findAll()
@@ -13,6 +16,53 @@ async function getExcusa(req, res) {
             res.status(500).json({ message: error.message || "Sucedió un error inesperado" });
         });
 }
+
+
+/**
+ * Obtiene las excusas que están asociadas a las clases del docente.
+ */
+async function getExcusasDocente(req, res) {
+    const { docenteId } = req.params;
+
+    try {
+        // Paso 1: obtener las clases asignadas al docente
+        const clasesAsignadas = await db.matricula.findAll({
+            where: { docenteId },
+            attributes: ['id_clase']
+        });
+
+        const clasesIds = clasesAsignadas.map(c => c.id_clase);
+
+        // Paso 2: obtener las excusas con alumno y clases asociadas
+        const excusas = await db.excusa.findAll({
+            include: [
+                {
+                    model: db.clase,
+                    through: { attributes: [] }
+                },
+                {
+                    model: db.alumno,
+                    as: 'alumno',
+                    attributes: ['alumnoId', 'nombre']
+                }
+            ]
+        });
+
+        // Paso 3: filtrar excusas que correspondan a clases del docente
+        const excusasFiltradas = excusas.filter(excusa =>
+            excusa.clases.some(clase => clasesIds.includes(clase.id_clase))
+        );
+
+        res.status(200).json(excusasFiltradas);
+
+    } catch (error) {
+        console.error("Error al obtener excusas del docente:", error);
+        res.status(500).json({ message: error.message || "Error al obtener excusas" });
+    }
+}
+
+  
+  
 
 async function insertExcusa(req, res) {
     const { razon, descripcion, alumnoId } = req.body;
@@ -115,5 +165,6 @@ module.exports = {
     getExcusa,
     insertExcusa,
     deleteExcusa,
-    updateExcusa
+    updateExcusa,
+    getExcusasDocente
 };

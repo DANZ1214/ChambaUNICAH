@@ -66,6 +66,8 @@ db.clase.belongsToMany(db.excusa, { through: db.excusaClase, foreignKey: 'id_cla
 
 // Nueva asociación:
 db.matricula.belongsTo(db.clase, { foreignKey: 'id_clase', as: 'clase' });
+db.excusa.belongsTo(db.alumno, { foreignKey: 'alumnoId', as: 'alumno' });
+
 
 // Exporta el objeto db para que pueda ser utilizado en otros módulos.
 module.exports = db;
