@@ -4,13 +4,16 @@ import './DocentesScreen.css';
 import { Modal, Button } from 'react-bootstrap';
 
 interface Excusa {
-  id: number;
+  id_excusa: number;
   alumno: {
     nombre: string;
   };
-  motivo: string;
-  fecha: string;
-  clases: number[]; // Cambiado a número para coincidir con id_clase
+  razon: string;
+  fecha_solicitud: string;
+  clases: {
+    id_clase: number;
+    nombre_clase: string;
+  }[];
 }
 
 interface ClaseDocente {
@@ -26,7 +29,6 @@ const DocenteScreen = () => {
   const [modalMessage, setModalMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  // Convertir docenteId a número
   const docenteId = sessionStorage.getItem('docenteId');
   const docenteIdNumber = docenteId ? Number(docenteId) : null;
 
@@ -40,13 +42,11 @@ const DocenteScreen = () => {
 
     const fetchData = async () => {
       try {
-        // Obtener clases del docente
         const clasesResponse = await axios.get<ClaseDocente[]>(
           `http://localhost:3008/api/unicah/matriculaAlumno/getClasesDocente/${docenteId}`
         );
         setClasesDocente(clasesResponse.data);
 
-        // Obtener excusas del docente
         const excusasResponse = await axios.get<Excusa[]>(
           `http://localhost:3008/api/unicah/excusa/getExcusasDocente/${docenteId}`
         );
@@ -65,15 +65,13 @@ const DocenteScreen = () => {
 
   const handleClaseChange = (idClase: number) => {
     setSelectedClases(prev =>
-      prev.includes(idClase)
-        ? prev.filter(c => c !== idClase)
-        : [...prev, idClase]
+      prev.includes(idClase) ? prev.filter(c => c !== idClase) : [...prev, idClase]
     );
   };
 
   const filteredExcusas = excusas.filter(excusa =>
     selectedClases.length === 0 ||
-    excusa.clases.some(claseId => selectedClases.includes(claseId))
+    excusa.clases.some(clase => selectedClases.includes(clase.id_clase))
   );
 
   const handleCloseModal = () => setShowModal(false);
@@ -101,7 +99,6 @@ const DocenteScreen = () => {
         <h2 className="text-primary">SISTEMA DE EXCUSAS UNICAH - VISTA DOCENTE</h2>
       </div>
 
-      {/* Sección de Clases Asignadas */}
       <div className="card shadow p-4 mb-4">
         <h4 className="text-secondary mb-3">Clases Asignadas</h4>
         {clasesDocente.length > 0 ? (
@@ -133,7 +130,6 @@ const DocenteScreen = () => {
         )}
       </div>
 
-      {/* Sección de Excusas */}
       <div className="card shadow p-4">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h3 className="text-primary m-0">Excusas Recibidas</h3>
@@ -162,19 +158,16 @@ const DocenteScreen = () => {
               </thead>
               <tbody>
                 {filteredExcusas.map(excusa => (
-                  <tr key={excusa.id}>
-                    <td>{excusa.alumno?.nombre || 'Nombre no disponible'}</td>
-                    <td>{excusa.motivo}</td>
-                    <td>{new Date(excusa.fecha).toLocaleDateString('es-HN')}</td>
-                    <td>
-                      {excusa.clases.map(claseId => {
-                        const clase = clasesDocente.find(c => c.id_clase === claseId);
-                        return clase 
-                          ? `${clase.nombre_clase} (${clase.id_clase})` 
-                          : 'Clase no identificada';
-                      }).join(', ')}
-                    </td>
-                  </tr>
+                  excusa.clases
+                    .filter(clase => selectedClases.includes(clase.id_clase))
+                    .map(claseFiltrada => (
+                      <tr key={`${excusa.id_excusa}-${claseFiltrada.id_clase}`}>
+                        <td>{excusa.alumno?.nombre || 'Nombre no disponible'}</td>
+                        <td>{excusa.razon}</td>
+                        <td>{new Date(excusa.fecha_solicitud).toLocaleDateString('es-HN')}</td>
+                        <td>{claseFiltrada.nombre_clase} ({claseFiltrada.id_clase})</td>
+                      </tr>
+                    ))
                 ))}
               </tbody>
             </table>
@@ -182,7 +175,6 @@ const DocenteScreen = () => {
         )}
       </div>
 
-      {/* Modal de Notificaciones */}
       <Modal show={showModal} onHide={handleCloseModal} centered>
         <Modal.Header closeButton>
           <Modal.Title>Notificación</Modal.Title>
