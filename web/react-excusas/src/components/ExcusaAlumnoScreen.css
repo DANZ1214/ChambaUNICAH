@@ -1,6 +1,6 @@
 /* Fondo general */
 html, body {
-  background-color: #f8f9fa;
+  background-color: #ffffff;
   height: 100%;
   width: 100%;
   margin: 0;
@@ -18,23 +18,40 @@ html, body {
   padding: 20px;
 }
 
-/* Tarjeta con sombra */
-.shadow {
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+/* Eliminar la sombra */
+.container-fluid .shadow {
+  box-shadow: none;
 }
 
-/* Texto de color primario */
-.text-primary {
-  color: #003366 !important;
+/* Estilo para el fondo y otros elementos */
+.alert-primary {
+  background-color: #d1e7ff;
+  border-color: #004085;
+  color: #004085;
 }
 
-/* Botón primario */
-.btn-primary {
-  background-color: #003366;
-  border-color: #003366;
+.form-check-label {
+  font-size: 14px;
 }
 
-.btn-primary:hover {
-  background-color: #002244;
-  border-color: #002244;
+.form-control {
+  border-radius: 0.25rem;
+}
+
+.text-muted {
+  font-size: 14px;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+/* Centrar el botón de envío */
+.text-centerr {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
