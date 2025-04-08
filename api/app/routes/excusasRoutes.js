@@ -13,7 +13,7 @@ apiRoutes.get('/getExcusasDocente/:docenteId', /* auth.isAuth, */ async (req, re
 });
 
 // Ruta para obtener todas las excusas
-apiRoutes.get('/getExcusa', auth.isAuth, async (req, res) => {
+apiRoutes.get('/getExcusa', /* auth.isAuth, */ async (req, res) => {
   await excusaController.getExcusa(req, res);
 });
 
@@ -23,12 +23,12 @@ apiRoutes.post('/insertExcusa', /* auth.isAuth, */ upload.single('archivo'), asy
 });
 
 // Ruta para eliminar una excusa
-apiRoutes.delete('/deleteExcusa', auth.isAuth, async (req, res) => {
+apiRoutes.delete('/deleteExcusa', /* auth.isAuth, */ async (req, res) => {
   await excusaController.deleteExcusa(req, res);
 });
 
 // Ruta para actualizar una excusa
-apiRoutes.put('/updateExcusa', auth.isAuth, async (req, res) => {
+apiRoutes.put('/updateExcusa', /* auth.isAuth, */ async (req, res) => {
   await excusaController.updateExcusa(req, res);
 });
 

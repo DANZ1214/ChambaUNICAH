@@ -140,26 +140,30 @@ async function deleteExcusa(req, res) {
 
 async function updateExcusa(req, res) {
     const { id_excusa, estado } = req.body;
+    console.log("UpdateExcusa BODY:", req.body); // 👈 Ver qué llega
 
     if (!id_excusa || !estado) {
         return res.status(400).send({ message: "El ID de la excusa y el nuevo estado son obligatorios" });
     }
 
-    excusa.update(
-        { estado },
-        { where: { id_excusa } }
-    )
-        .then(([rowsUpdated]) => {
-            if (rowsUpdated > 0) {
-                res.status(200).send({ message: "Excusa actualizada exitosamente" });
-            } else {
-                res.status(404).send({ message: "Excusa no encontrada" });
-            }
-        })
-        .catch(error => {
-            res.status(500).send({ message: error.message || "Error al actualizar excusa" });
-        });
+    try {
+        const [rowsUpdated] = await excusa.update(
+            { estado },
+            { where: { id_excusa } }
+        );
+        console.log("Rows updated:", rowsUpdated); // 👈 Ver si actualizó
+
+        if (rowsUpdated > 0) {
+            res.status(200).send({ message: "Excusa actualizada exitosamente" });
+        } else {
+            res.status(404).send({ message: "Excusa no encontrada" });
+        }
+    } catch (error) {
+        console.error("Error actualizando excusa:", error); // 👈 Por si falla
+        res.status(500).send({ message: error.message || "Error al actualizar excusa" });
+    }
 }
+
 
 module.exports = {
     getExcusa,

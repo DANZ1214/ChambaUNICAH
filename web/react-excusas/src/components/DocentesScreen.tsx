@@ -10,6 +10,7 @@ interface Excusa {
   };
   razon: string;
   fecha_solicitud: string;
+  estado: string;
   clases: {
     id_clase: number;
     nombre_clase: string;
@@ -67,6 +68,28 @@ const DocenteScreen = () => {
     setSelectedClases(prev =>
       prev.includes(idClase) ? prev.filter(c => c !== idClase) : [...prev, idClase]
     );
+  };
+
+  const actualizarEstado = async (id_excusa: number, estado: string) => {
+    try {
+      const response = await axios.put('http://localhost:3008/api/unicah/excusa/updateExcusa', {
+        id_excusa,
+        estado
+      });
+
+      if (response.status === 200) {
+        const nuevasExcusas = excusas.map(e =>
+          e.id_excusa === id_excusa ? { ...e, estado } : e
+        );
+        setExcusas(nuevasExcusas);
+      } else {
+        throw new Error('No se pudo actualizar');
+      }
+    } catch (error) {
+      console.error('Error al actualizar:', error);
+      setModalMessage('No se pudo actualizar el estado de la excusa');
+      setShowModal(true);
+    }
   };
 
   const filteredExcusas = excusas.filter(excusa =>
@@ -153,11 +176,12 @@ const DocenteScreen = () => {
                   <th>Alumno</th>
                   <th>Motivo</th>
                   <th>Fecha</th>
-                  <th>Clases Afectadas</th>
+                  <th>Clase Afectada</th>
+                  <th>Estado</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredExcusas.map(excusa => (
+                {filteredExcusas.map(excusa =>
                   excusa.clases
                     .filter(clase => selectedClases.includes(clase.id_clase))
                     .map(claseFiltrada => (
@@ -166,9 +190,35 @@ const DocenteScreen = () => {
                         <td>{excusa.razon}</td>
                         <td>{new Date(excusa.fecha_solicitud).toLocaleDateString('es-HN')}</td>
                         <td>{claseFiltrada.nombre_clase} ({claseFiltrada.id_clase})</td>
+                        <td>
+                          {excusa.estado === 'Pendiente' ? (
+                            <>
+                              <span className="badge bg-warning text-dark me-2">Pendiente</span>
+                              <Button
+                                variant="success"
+                                size="sm"
+                                className="me-1"
+                                onClick={() => actualizarEstado(excusa.id_excusa, 'Aprobado')}
+                              >
+                                Aprobar
+                              </Button>
+                              <Button
+                                variant="danger"
+                                size="sm"
+                                onClick={() => actualizarEstado(excusa.id_excusa, 'Rechazado')}
+                              >
+                                Rechazar
+                              </Button>
+                            </>
+                          ) : (
+                            <span className={`badge ${excusa.estado === 'Aprobado' ? 'bg-success' : 'bg-danger'}`}>
+                              {excusa.estado}
+                            </span>
+                          )}
+                        </td>
                       </tr>
                     ))
-                ))}
+                )}
               </tbody>
             </table>
           </div>
