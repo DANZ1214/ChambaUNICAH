@@ -190,7 +190,10 @@ function ExcusaAlumnoScreen() {
           )}
         </div>
 
-        <button className="btn btn-primary mt-3" onClick={handleSubmit}>ENVIAR</button>
+        {/* Botón centrado utilizando .text-centerr */}
+        <div className="text-centerr mt-3">
+          <button className="btn btn-primary" onClick={handleSubmit}>ENVIAR</button>
+        </div>
       </div>
 
       <Modal show={showModal} onHide={handleCloseModal} centered>
