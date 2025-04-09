@@ -2,11 +2,33 @@
 
 const express = require('express');
 const cors = require('cors');
-const path = require('path');// NECESARIO para servir archivos
+const path = require('path');
+const fs = require('fs');
 
 const App = express();
 
-// Rutas
+// CORS
+App.use(cors({ origin: '*' }));
+
+// Body parsers
+App.use(express.json({ limit: '10mb' }));
+App.use(express.urlencoded({ extended: false }));
+
+// ✅ SERVIR ARCHIVOS DESDE app/uploads (donde realmente están)
+App.use('/uploads', express.static(path.resolve(__dirname, 'uploads')));
+
+// ✅ RUTA EXTRA MANUAL (por si express.static no responde)
+App.get('/uploads/:filename', (req, res) => {
+  const filePath = path.join(__dirname, 'uploads', req.params.filename);
+  fs.access(filePath, fs.constants.F_OK, err => {
+    if (err) {
+      return res.status(404).send('Archivo no encontrado');
+    }
+    res.sendFile(filePath);
+  });
+});
+
+// Rutas API
 const alumnoRoutes = require('./routes/alumnoRoutes');
 const claseRoutes = require('./routes/claseRoutes');
 const docenteRoutes = require('./routes/docenteRoutes');
@@ -15,18 +37,6 @@ const excusasRoutes = require('./routes/excusasRoutes');
 const matriculaRoutes = require('./routes/matriculaRoutes');
 const matriculaAlumnoRoutes = require('./routes/matriculaAlumnoRoutes');
 
-// CORS
-App.use(
-    cors({
-        origin: "*",
-    })
-);
-
-// Body parsers
-App.use(express.json({ limit: '10mb' }));
-App.use(express.urlencoded({ extended: false }));
-
-// Rutas API
 App.use('/api/unicah/alumno', alumnoRoutes);
 App.use('/api/unicah/clase', claseRoutes);
 App.use('/api/unicah/docente', docenteRoutes);
@@ -35,11 +45,4 @@ App.use('/api/unicah/excusa', excusasRoutes);
 App.use('/api/unicah/matricula', matriculaRoutes);
 App.use('/api/unicah/matriculaAlumno', matriculaAlumnoRoutes);
 
-// ✅ Servir archivos de /uploads como públicos
-App.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Arrancar el server
-const PORT = 3008;
-App.listen(PORT, '0.0.0.0', () => {
-    console.log(`🔥 Servidor corriendo en http://0.0.0.0:${PORT}`);
-});
+module.exports = App;
