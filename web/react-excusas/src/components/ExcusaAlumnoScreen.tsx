@@ -118,7 +118,7 @@ function ExcusaAlumnoScreen() {
       <div className="container-fluid">
         {/* Logo de la UNICAH */}
         <div className="logo-container text-center mb-3">
-          <img src="https://i.postimg.cc/NfcLn1tB/image-removebg-preview-65.png" alt="Logo Unicah" className="img-fluid" width="150" />
+          <img src="https://login.sec.unicah.net/imgs/NewLogo.png" alt="Logo Unicah" className="img-fluid" width="150" />
         </div>
 
         {/* Título del Sistema */}

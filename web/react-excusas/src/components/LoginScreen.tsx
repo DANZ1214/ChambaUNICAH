@@ -51,9 +51,10 @@ const LoginScreen = () => {
       {/* Encabezado */}
       <header className="header">
         <img
-          src="https://i.postimg.cc/NfcLn1tB/image-removebg-preview-65.png"
+          src="https://login.sec.unicah.net/imgs/NewLogo.png"
           alt="Logo Unicah"
           className="header-logo"
+          height="120"
         />
       </header>
 
@@ -61,10 +62,10 @@ const LoginScreen = () => {
       <div className="login-screen-wrapper">
         <div className="text-center mb-4">
           <img
-            src="https://i.postimg.cc/NfcLn1tB/image-removebg-preview-65.png"
+            src="https://login.sec.unicah.net/imgs/NewLogo.png"
             alt="Logo Unicah"
             className="img-fluid main-logo"
-            width="150"
+            width="190"
           />
           <h3 className="text-primary mt-2">UNIVERSIDAD CATÓLICA DE HONDURAS</h3>
           <p className="text-secondary">NUESTRA SEÑORA REINA DE LA PAZ</p>
