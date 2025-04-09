@@ -9,6 +9,8 @@ interface Excusa {
     nombre: string;
   };
   razon: string;
+  descripcion: string;
+  archivo?: string;
   fecha_solicitud: string;
   estado: string;
   clases: {
@@ -53,7 +55,6 @@ const DocenteScreen = () => {
         );
         setExcusas(excusasResponse.data);
       } catch (error) {
-        console.error('Error al cargar datos:', error);
         setModalMessage('Error al cargar los datos. Por favor, intenta nuevamente.');
         setShowModal(true);
       } finally {
@@ -70,38 +71,35 @@ const DocenteScreen = () => {
     );
   };
 
-  const actualizarEstado = async (id_excusa: number, estado: string) => {
+  const handleEstadoUpdate = async (id_excusa: number, estado: string) => {
     try {
-      const response = await axios.put('http://localhost:3008/api/unicah/excusa/updateExcusa', {
+      await axios.put('http://localhost:3008/api/unicah/excusa/updateExcusa', {
         id_excusa,
         estado
       });
 
-      if (response.status === 200) {
-        const nuevasExcusas = excusas.map(e =>
-          e.id_excusa === id_excusa ? { ...e, estado } : e
-        );
-        setExcusas(nuevasExcusas);
-      } else {
-        throw new Error('No se pudo actualizar');
-      }
+      setExcusas(prev =>
+        prev.map(excusa =>
+          excusa.id_excusa === id_excusa ? { ...excusa, estado } : excusa
+        )
+      );
     } catch (error) {
-      console.error('Error al actualizar:', error);
       setModalMessage('No se pudo actualizar el estado de la excusa');
       setShowModal(true);
     }
   };
 
-  const filteredExcusas = excusas.filter(excusa =>
-    selectedClases.length === 0 ||
-    excusa.clases.some(clase => selectedClases.includes(clase.id_clase))
-  );
+  const filteredExcusas = selectedClases.length > 0
+    ? excusas.filter(excusa =>
+        excusa.clases.some(clase => selectedClases.includes(clase.id_clase))
+      )
+    : excusas;
 
   const handleCloseModal = () => setShowModal(false);
 
   if (isLoading) {
     return (
-      <div className="container-fluid vh-100 d-flex justify-content-center align-items-center">
+      <div className="container-fluid min-vh-100 d-flex justify-content-center align-items-center">
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Cargando...</span>
         </div>
@@ -111,7 +109,7 @@ const DocenteScreen = () => {
   }
 
   return (
-    <div className="container-fluid vh-100 p-4 bg-white">
+    <div className="container-fluid">
       <div className="text-center mb-4">
         <img
           src="https://i.postimg.cc/NfcLn1tB/image-removebg-preview-65.png"
@@ -119,17 +117,18 @@ const DocenteScreen = () => {
           className="img-fluid"
           width="150"
         />
-        <h2 className="text-primary">SISTEMA DE EXCUSAS UNICAH - VISTA DOCENTE</h2>
+        <h2 className="mt-3">UNICAH - VISTA DOCENTE</h2>
       </div>
 
-      <div className="card shadow p-4 mb-4">
-        <h4 className="text-secondary mb-3">Clases Asignadas</h4>
+      {/* ✅ Card con clases asignadas no se colapsa */}
+      <div className="card card-clases">
+        <h4 className="mb-3">Clases Asignadas</h4>
         {clasesDocente.length > 0 ? (
           <>
-            <p className="text-muted mb-3">Selecciona las clases para filtrar excusas:</p>
+            <p className="text-muted">Selecciona las clases para filtrar excusas:</p>
             <div className="row">
               {clasesDocente.map(clase => (
-                <div key={clase.id_clase} className="col-md-4 mb-3">
+                <div key={clase.id_clase} className="col-md-6 col-lg-4 mb-2">
                   <div className="form-check">
                     <input
                       className="form-check-input"
@@ -153,28 +152,31 @@ const DocenteScreen = () => {
         )}
       </div>
 
-      <div className="card shadow p-4">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h3 className="text-primary m-0">Excusas Recibidas</h3>
+      <div className="card">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h4 className="m-0">Excusas Recibidas</h4>
           {selectedClases.length > 0 && (
             <span className="badge bg-info">
               Filtrado: {selectedClases.length} clase(s) seleccionada(s)
             </span>
           )}
         </div>
+
         {filteredExcusas.length === 0 ? (
           <div className="alert alert-info">
             {selectedClases.length > 0
               ? 'No hay excusas para las clases seleccionadas'
-              : 'No hay excusas registradas para tus clases'}
+              : 'No hay excusas registradas'}
           </div>
         ) : (
           <div className="table-responsive">
-            <table className="table table-striped table-hover">
-              <thead className="table-dark">
+            <table className="table table-bordered table-hover table-custom">
+              <thead className="table-dark text-center align-middle">
                 <tr>
                   <th>Alumno</th>
                   <th>Motivo</th>
+                  <th>Descripción</th>
+                  <th>Archivo</th>
                   <th>Fecha</th>
                   <th>Clase Afectada</th>
                   <th>Estado</th>
@@ -184,34 +186,49 @@ const DocenteScreen = () => {
                 {filteredExcusas.map(excusa =>
                   excusa.clases
                     .filter(clase => selectedClases.includes(clase.id_clase))
-                    .map(claseFiltrada => (
-                      <tr key={`${excusa.id_excusa}-${claseFiltrada.id_clase}`}>
+                    .map(clase => (
+                      <tr key={`${excusa.id_excusa}-${clase.id_clase}`}>
                         <td>{excusa.alumno?.nombre || 'Nombre no disponible'}</td>
                         <td>{excusa.razon}</td>
+                        <td>{excusa.descripcion}</td>
+                        <td>
+                          {excusa.archivo ? (
+                            <a
+                              href={`http://localhost:3008/uploads/${excusa.archivo}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Ver archivo
+                            </a>
+                          ) : (
+                            'Sin archivo'
+                          )}
+                        </td>
                         <td>{new Date(excusa.fecha_solicitud).toLocaleDateString('es-HN')}</td>
-                        <td>{claseFiltrada.nombre_clase} ({claseFiltrada.id_clase})</td>
+                        <td>{`${clase.nombre_clase} (${clase.id_clase})`}</td>
                         <td>
                           {excusa.estado === 'Pendiente' ? (
                             <>
-                              <span className="badge bg-warning text-dark me-2">Pendiente</span>
-                              <Button
-                                variant="success"
-                                size="sm"
-                                className="me-1"
-                                onClick={() => actualizarEstado(excusa.id_excusa, 'Aprobado')}
+                              <span className="badge bg-warning text-dark me-1">Pendiente</span>
+                              <button
+                                className="btn btn-success btn-sm me-1"
+                                onClick={() => handleEstadoUpdate(excusa.id_excusa, 'Aprobado')}
                               >
                                 Aprobar
-                              </Button>
-                              <Button
-                                variant="danger"
-                                size="sm"
-                                onClick={() => actualizarEstado(excusa.id_excusa, 'Rechazado')}
+                              </button>
+                              <button
+                                className="btn btn-danger btn-sm"
+                                onClick={() => handleEstadoUpdate(excusa.id_excusa, 'Rechazado')}
                               >
                                 Rechazar
-                              </Button>
+                              </button>
                             </>
                           ) : (
-                            <span className={`badge ${excusa.estado === 'Aprobado' ? 'bg-success' : 'bg-danger'}`}>
+                            <span
+                              className={`badge ${
+                                excusa.estado === 'Aprobado' ? 'bg-success' : 'bg-danger'
+                              }`}
+                            >
                               {excusa.estado}
                             </span>
                           )}
