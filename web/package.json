@@ -1,5 +1,15 @@
 {
   "dependencies": {
-    "bootstrap": "^5.3.3"
+    "bootstrap": "^5.3.7",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
+    "react-bootstrap": "^2.10.10",
+    "react-router-dom": "^7.7.1"
+  },
+  "devDependencies": {
+    "@4c/tsconfig": "^0.4.1",
+    "@types/bootstrap": "^5.2.10",
+    "@types/jspdf": "^1.3.3",
+    "@types/react-router-dom": "^5.3.3"
   }
 }

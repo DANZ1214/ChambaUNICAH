@@ -35,15 +35,12 @@ const DocenteScreen = () => {
   const [showModal, setShowModal] = useState(false)
   const [modalMessage, setModalMessage] = useState("")
   const [isLoading, setIsLoading] = useState(true)
-  // Estados para el visor de PDF
-  const [showPdfModal, setShowPdfModal] = useState(false)
-  const [pdfUrl, setPdfUrl] = useState("")
-  const [pdfTitle, setPdfTitle] = useState("")
 
-  const docenteId = sessionStorage.getItem("docenteId")
-  const docenteIdNumber = docenteId ? Number(docenteId) : null
-
+  // Mover la lógica de obtener docenteId dentro del useEffect
   useEffect(() => {
+    const docenteId = sessionStorage.getItem("docenteId")
+    const docenteIdNumber = docenteId ? Number(docenteId) : null
+
     if (!docenteIdNumber || isNaN(docenteIdNumber)) {
       setModalMessage("No se ha identificado al docente. Vuelve a iniciar sesión.")
       setShowModal(true)
@@ -62,16 +59,18 @@ const DocenteScreen = () => {
           `http://localhost:3008/api/unicah/excusa/getExcusasDocente/${docenteId}`,
         )
         setExcusas(excusasResponse.data)
-      } catch (error) {
-        setModalMessage("Error al cargar los datos. Por favor, intenta nuevamente.")
-        setShowModal(true)
-      } finally {
+      } catch (error) {  
+         console.error('Error al cargar datos:', error);
+         setModalMessage("Error al cargar los datos. Por favor, intenta nuevamente.")
+         setShowModal(true)
+        } 
+      finally {
         setIsLoading(false)
       }
     }
 
     fetchData()
-  }, [docenteId])
+  }, []) // Array de dependencias vacío ya que solo se ejecuta una vez al montar
 
   const handleClaseChange = (idClase: number) => {
     setSelectedClases((prev) => (prev.includes(idClase) ? prev.filter((c) => c !== idClase) : [...prev, idClase]))
@@ -79,13 +78,15 @@ const DocenteScreen = () => {
 
   const handleEstadoUpdate = async (id_excusa: number, estado: string) => {
     try {
-      await axios.put("http://localhost:3008/api/unicah/excusa/updateExcusa", {
-        id_excusa,
-        estado,
-      })
+      // Descomentar cuando tengas el endpoint funcionando
+      // await axios.put("http://localhost:3008/api/unicah/excusa/updateExcusa", {
+      //   id_excusa,
+      //   estado,
+      // })
 
       setExcusas((prev) => prev.map((excusa) => (excusa.id_excusa === id_excusa ? { ...excusa, estado } : excusa)))
     } catch (error) {
+      console.error('Error al actualizar excusa:', error)
       setModalMessage("No se pudo actualizar el estado de la excusa")
       setShowModal(true)
     }
@@ -285,7 +286,7 @@ const DocenteScreen = () => {
               <tbody>
                 {filteredExcusas.map((excusa) =>
                   excusa.clases
-                    .filter((clase) => selectedClases.includes(clase.id_clase))
+                    .filter((clase) => selectedClases.length === 0 || selectedClases.includes(clase.id_clase))
                     .map((clase) => (
                       <tr key={`${excusa.id_excusa}-${clase.id_clase}`}>
                         <td>{excusa.alumno?.nombre || "Nombre no disponible"}</td>

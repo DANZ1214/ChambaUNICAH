@@ -1,0 +1,55 @@
+{
+  "name": "chambaunicah",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint . --fix",
+    "preview": "vite preview",
+    "prepare": "husky install",
+    "pre-commit": "npm run lint && tsc -b",
+    "release": "standard-version release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DANZ1214/ChambaUNICAH.git"
+  },
+  "author": "DC",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DANZ1214/ChambaUNICAH/issues"
+  },
+  "homepage": "https://github.com/DANZ1214/ChambaUNICAH#readme",
+  "description": "",
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2",
+    "axios": "^1.11.0",
+    "lodash": "^4.17.21",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-redux": "^9.2.0",
+    "redux": "^5.0.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/js": "^9.32.0",
+    "@types/lodash": "^4.17.20",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.7.0",
+    "eslint": "^9.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^15.15.0",
+    "husky": "^8.0.3",
+    "standard-version": "^9.5.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.38.0",
+    "vite": "^6.3.5"
+  }
+}
